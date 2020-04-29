@@ -1,0 +1,18 @@
+{
+  "name": "oya-market",
+  "version": "1.0.0",
+  "description": "Decentralized P2P marketplace and lending network.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "oya",
+    "ethereum",
+    "market",
+    "lending",
+    "crypto"
+  ],
+  "author": "John Shutt",
+  "license": "ISC"
+}
