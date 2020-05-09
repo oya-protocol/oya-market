@@ -1,5 +1,13 @@
 pragma solidity >=0.6.0 <0.7.0;
 
+// TODO:
+// * Payments in Dai
+// * Track shipment via Chainlink EasyPost integration
+// * Calculate block to automatically unlock payment based on date of delivery
+// * Only require the payment for the item to be sent by buyer
+// * Add self-destruct function that gives gas refund and emits event
+// * Accept constructor parameters from PurchaseFactory contract
+
 contract Purchase {
   uint public value;
   address payable public seller;
