@@ -1,6 +1,7 @@
 pragma solidity >=0.6.0 <0.7.0;
 
 // TODO:
+// * Remove unused boilerplate (DONE)
 // * Payments in Dai
 // * Track shipment via Chainlink EasyPost integration
 // * Calculate block to automatically unlock payment based on date of delivery
@@ -9,11 +10,11 @@ pragma solidity >=0.6.0 <0.7.0;
 // * Accept constructor parameters from PurchaseFactory contract
 
 contract Purchase {
-  uint public value;
   address payable public seller;
   address payable public buyer;
+  address public paymentToken;
 
-  enum State { Created, Locked, Release, Inactive }
+  enum State { Created, Released, Inactive }
   // The state variable has a default value of the first member, `State.created`
   State public state;
 
@@ -46,81 +47,33 @@ contract Purchase {
     _;
   }
 
-  event Aborted();
-  event PurchaseConfirmed();
   event ItemReceived();
-  event SellerRefunded();
+  event SellerPaid();
 
-  // Ensure that `msg.value` is an even number.
-  // Division will truncate if it is an odd number.
-  // Check via multiplication that it wasn't an odd number.
-  constructor() public payable {
-    seller = msg.sender;
-    value = msg.value / 2;
-    require((2 * value) == msg.value, "Value has to be even.");
-  }
-
-  /// Abort the purchase and reclaim the ether.
-  /// Can only be called by the seller before
-  /// the contract is locked.
-  function abort()
-    public
-    onlySeller
-    inState(State.Created)
-  {
-    emit Aborted();
-    state = State.Inactive;
-    // We use transfer here directly. It is
-    // reentrancy-safe, because it is the
-    // last call in this function and we
-    // already changed the state.
-    seller.transfer(address(this).balance);
-  }
-
-  /// Confirm the purchase as buyer.
-  /// Transaction has to include `2 * value` ether.
-  /// The ether will be locked until confirmReceived
-  /// is called.
-  function confirmPurchase()
-    public
-    inState(State.Created)
-    condition(msg.value == (2 * value))
-    payable
-  {
-    emit PurchaseConfirmed();
-    buyer = msg.sender;
-    state = State.Locked;
+  constructor(address payable _seller, address payable _buyer, address _paymentToken) public payable {
+    seller = _seller;
+    buyer = _buyer;
+    paymentToken = _paymentToken;
   }
 
   /// Confirm that you (the buyer) received the item.
-  /// This will release the locked ether.
+  /// This will release the locked payment.
   function confirmReceived()
     public
     onlyBuyer
-    inState(State.Locked)
+    inState(State.Created)
   {
     emit ItemReceived();
-    // It is important to change the state first because
-    // otherwise, the contracts called using `send` below
-    // can call in again here.
-    state = State.Release;
-
-    buyer.transfer(value);
+    state = State.Released;
   }
 
-  /// This function refunds the seller, i.e.
-  /// pays back the locked funds of the seller.
-  function refundSeller()
+  /// This function pays the seller
+  function paySeller()
     public
     onlySeller
-    inState(State.Release)
+    inState(State.Released)
   {
-    emit SellerRefunded();
-    // It is important to change the state first because
-    // otherwise, the contracts called using `send` below
-    // can call in again here.
+    emit SellerPaid();
     state = State.Inactive;
-
-    seller.transfer(3 * value);
   }
 }
