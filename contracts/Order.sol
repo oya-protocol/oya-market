@@ -1,6 +1,7 @@
 pragma solidity >=0.6.0 <0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 
 // TODO:
 // * Remove unused boilerplate (DONE)
@@ -12,7 +13,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // * Calculate block to automatically unlock payment based on date of delivery
 // * Add self-destruct function that gives gas refund and emits event
 
-contract Order {
+contract Order is ChainlinkClient {
   address payable public seller;
   address payable public buyer;
   IERC20 public paymentToken;
@@ -60,8 +61,17 @@ contract Order {
     address payable _seller,
     address payable _buyer,
     IERC20 _paymentToken,
-    uint256 _paymentAmount
+    uint256 _paymentAmount,
+    address _link
   ) public payable {
+    // Set the address for the LINK token for the network.
+    if(_link == address(0)) {
+      // Useful for deploying to public networks.
+      setPublicChainlinkToken();
+    } else {
+      // Useful if you're deploying to a local network.
+      setChainlinkToken(_link);
+    }
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
@@ -87,6 +97,15 @@ contract Order {
   function confirmReceived()
     public
     onlyBuyer
+    inState(State.Created)
+  {
+    emit ItemAccepted();
+    state = State.Accepted;
+  }
+
+  /// Confirm automatically that order was delivered and wait period has passed
+  function confirmReceivedAutomatically()
+    public
     inState(State.Created)
   {
     emit ItemAccepted();
