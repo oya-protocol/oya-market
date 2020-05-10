@@ -9,6 +9,9 @@ import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 // * Accept constructor parameters from PurchaseFactory contract (DONE)
 // * Only require the payment for the item to be sent by buyer (DONE)
 // * Escrow the payments from buyer (DONE)
+// * Function for seller to set tracking details
+// * Function for buyer to reclaim funds if tracking details not set in time
+// * Function for seller to claim funds if item was confirmed delivered and wait time has passed
 // * Track shipment via Chainlink EasyPost integration
 // * Calculate block to automatically unlock payment based on date of delivery
 // * Add self-destruct function that gives gas refund and emits event
@@ -18,8 +21,11 @@ contract Order is ChainlinkClient {
   address payable public buyer;
   IERC20 public paymentToken;
   uint256 public balance;
+  uint256 public sellerDeadlineToSetTrackingDetails;
+  uint256 public buyerDeadlineToReviewDelivery;
+  /* TODO: define required variables for tracking */
 
-  enum State { Created, Refunded, Accepted, Paid }
+  enum State { Created, Refunded, Locked, Accepted, Delivered, Paid }
   // The state variable has a default value of the first member, `State.created`
   State public state;
 
@@ -54,6 +60,7 @@ contract Order is ChainlinkClient {
 
   event OrderCreated();
   event OrderRefunded();
+  event TrackingSet();
   event ItemAccepted();
   event SellerPaid();
 
@@ -62,8 +69,11 @@ contract Order is ChainlinkClient {
     address payable _buyer,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
+    uint256 _sellerDeadlineToSetTrackingDetails;
+    uint256 _buyerDeadlineToReviewDelivery;
     address _link
   ) public payable {
+    emit OrderCreated();
     // Set the address for the LINK token for the network.
     if(_link == address(0)) {
       // Useful for deploying to public networks.
@@ -75,9 +85,10 @@ contract Order is ChainlinkClient {
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
+    sellerDeadlineToSetTrackingDetails = _sellerDeadlineToSetTrackingDetails;
+    buyerDeadlineToReviewDelivery = _buyerDeadlineToReviewDelivery;
     paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
     balance = _paymentAmount;
-    emit OrderCreated();
   }
 
   /// Confirm that you (the buyer) received the item.
@@ -92,30 +103,41 @@ contract Order is ChainlinkClient {
     paymentToken.transferFrom(address(this), buyer, balance);
   }
 
-  /// Confirm that you (the buyer) received the item.
-  /// This will release the locked payment.
-  function confirmReceived()
+  /// Confirm that you (the seller) shipped the item.
+  function setTracking(/*TODO: fill in tracking details*/)
     public
-    onlyBuyer
+    onlySeller
     inState(State.Created)
   {
-    emit ItemAccepted();
-    state = State.Accepted;
+    emit TrackingSet();
+    /* TODO: set tracking details */
+    state = State.Locked;
   }
 
-  /// Confirm automatically that order was delivered and wait period has passed
-  function confirmReceivedAutomatically()
+  /// Confirm that you (the buyer) received and accept the item.
+  /// This will unlock the payment.
+  function acceptItem()
     public
-    inState(State.Created)
+    onlyBuyer
   {
     emit ItemAccepted();
     state = State.Accepted;
+    paySeller();
+  }
+
+  /// Seller claims payment after buyer review deadline has passed
+  function confirmReceivedAutomatically()
+    public
+    inState(State.Delivered)
+  {
+    emit ItemAccepted();
+    state = State.Accepted;
+    paySeller();
   }
 
   /// This function pays the seller
   function paySeller()
     public
-    onlySeller
     inState(State.Accepted)
   {
     emit SellerPaid();
