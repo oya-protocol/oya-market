@@ -4,18 +4,19 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // TODO:
 // * Remove unused boilerplate (DONE)
-// * Payments in Dai
+// * Payments in ERC20 tokens (DONE)
+// * Accept constructor parameters from PurchaseFactory contract (DONE)
+// * Only require the payment for the item to be sent by buyer (DONE)
+// * Escrow the payments from buyer (DONE)
 // * Track shipment via Chainlink EasyPost integration
 // * Calculate block to automatically unlock payment based on date of delivery
-// * Only require the payment for the item to be sent by buyer
 // * Add self-destruct function that gives gas refund and emits event
-// * Accept constructor parameters from PurchaseFactory contract
 
 contract Purchase {
   address payable public seller;
   address payable public buyer;
   IERC20 public paymentToken;
-  uint256 public paymentAmount;
+  uint256 public balance;
 
   enum State { Created, Released, Inactive }
   // The state variable has a default value of the first member, `State.created`
@@ -62,7 +63,8 @@ contract Purchase {
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
-    paymentAmount = _paymentAmount;
+    _paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
+    balance = _paymentAmount;
   }
 
   /// Confirm that you (the buyer) received the item.
