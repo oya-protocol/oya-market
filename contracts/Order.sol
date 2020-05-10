@@ -70,8 +70,8 @@ contract Order is ChainlinkClient {
     address payable _buyer,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
-    uint256 _sellerDeadline;
-    uint256 _buyerDeadline;
+    uint256 _sellerDeadline,
+    uint256 _buyerDeadline,
     address _link
   ) public payable {
     emit OrderCreated();
