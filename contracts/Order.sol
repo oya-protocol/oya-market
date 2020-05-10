@@ -21,8 +21,9 @@ contract Order is ChainlinkClient {
   address payable public buyer;
   IERC20 public paymentToken;
   uint256 public balance;
-  uint256 public sellerDeadlineToSetTrackingDetails;
-  uint256 public buyerDeadlineToReviewDelivery;
+  uint256 public sellerDeadline;
+  uint256 public buyerDeadline;
+  uint256 public createTime;
   /* TODO: define required variables for tracking */
 
   enum State { Created, Refunded, Locked, Accepted, Delivered, Paid }
@@ -69,8 +70,8 @@ contract Order is ChainlinkClient {
     address payable _buyer,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
-    uint256 _sellerDeadlineToSetTrackingDetails;
-    uint256 _buyerDeadlineToReviewDelivery;
+    uint256 _sellerDeadline;
+    uint256 _buyerDeadline;
     address _link
   ) public payable {
     emit OrderCreated();
@@ -85,10 +86,11 @@ contract Order is ChainlinkClient {
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
-    sellerDeadlineToSetTrackingDetails = _sellerDeadlineToSetTrackingDetails;
-    buyerDeadlineToReviewDelivery = _buyerDeadlineToReviewDelivery;
+    sellerDeadline = _sellerDeadline;
+    buyerDeadline = _buyerDeadline;
     paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
     balance = _paymentAmount;
+    createTime = now;
   }
 
   /// Confirm that you (the buyer) received the item.
