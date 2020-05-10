@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // * Calculate block to automatically unlock payment based on date of delivery
 // * Add self-destruct function that gives gas refund and emits event
 
-contract Purchase {
+contract Order {
   address payable public seller;
   address payable public buyer;
   IERC20 public paymentToken;
@@ -51,7 +51,9 @@ contract Purchase {
     _;
   }
 
-  event ItemReceived();
+  event OrderCreated();
+  event OrderRefunded();
+  event ItemAccepted();
   event SellerPaid();
 
   constructor(
@@ -65,6 +67,7 @@ contract Purchase {
     paymentToken = _paymentToken;
     paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
     balance = _paymentAmount;
+    emit OrderCreated();
   }
 
   /// Confirm that you (the buyer) received the item.
@@ -74,7 +77,7 @@ contract Purchase {
     onlyBuyer
     inState(State.Created)
   {
-    emit ItemReceived();
+    emit OrderRefunded();
     state = State.Refunded;
     paymentToken.transferFrom(address(this), buyer, balance);
   }
@@ -86,7 +89,7 @@ contract Purchase {
     onlyBuyer
     inState(State.Created)
   {
-    emit ItemReceived();
+    emit ItemAccepted();
     state = State.Accepted;
   }
 
