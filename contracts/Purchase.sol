@@ -18,7 +18,7 @@ contract Purchase {
   IERC20 public paymentToken;
   uint256 public balance;
 
-  enum State { Created, Released, Inactive }
+  enum State { Created, Refunded, Accepted, Paid }
   // The state variable has a default value of the first member, `State.created`
   State public state;
 
@@ -63,8 +63,20 @@ contract Purchase {
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
-    _paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
+    paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
     balance = _paymentAmount;
+  }
+
+  /// Confirm that you (the buyer) received the item.
+  /// This will release the locked payment.
+  function demandRefund()
+    public
+    onlyBuyer
+    inState(State.Created)
+  {
+    emit ItemReceived();
+    state = State.Refunded;
+    paymentToken.transferFrom(address(this), buyer, balance);
   }
 
   /// Confirm that you (the buyer) received the item.
@@ -75,16 +87,17 @@ contract Purchase {
     inState(State.Created)
   {
     emit ItemReceived();
-    state = State.Released;
+    state = State.Accepted;
   }
 
   /// This function pays the seller
   function paySeller()
     public
     onlySeller
-    inState(State.Released)
+    inState(State.Accepted)
   {
     emit SellerPaid();
-    state = State.Inactive;
+    state = State.Paid;
+    paymentToken.transferFrom(address(this), seller, balance);
   }
 }
