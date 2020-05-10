@@ -1,5 +1,7 @@
 pragma solidity >=0.6.0 <0.7.0;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 // TODO:
 // * Remove unused boilerplate (DONE)
 // * Payments in Dai
@@ -12,7 +14,7 @@ pragma solidity >=0.6.0 <0.7.0;
 contract Purchase {
   address payable public seller;
   address payable public buyer;
-  address public paymentToken;
+  IERC20 public paymentToken;
 
   enum State { Created, Released, Inactive }
   // The state variable has a default value of the first member, `State.created`
@@ -50,7 +52,7 @@ contract Purchase {
   event ItemReceived();
   event SellerPaid();
 
-  constructor(address payable _seller, address payable _buyer, address _paymentToken) public payable {
+  constructor(address payable _seller, address payable _buyer, IERC20 _paymentToken) public payable {
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
