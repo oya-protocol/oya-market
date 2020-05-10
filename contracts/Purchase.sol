@@ -15,6 +15,7 @@ contract Purchase {
   address payable public seller;
   address payable public buyer;
   IERC20 public paymentToken;
+  uint256 public paymentAmount;
 
   enum State { Created, Released, Inactive }
   // The state variable has a default value of the first member, `State.created`
@@ -52,10 +53,16 @@ contract Purchase {
   event ItemReceived();
   event SellerPaid();
 
-  constructor(address payable _seller, address payable _buyer, IERC20 _paymentToken) public payable {
+  constructor(
+    address payable _seller,
+    address payable _buyer,
+    IERC20 _paymentToken,
+    uint256 _paymentAmount
+  ) public payable {
     seller = _seller;
     buyer = _buyer;
     paymentToken = _paymentToken;
+    paymentAmount = _paymentAmount;
   }
 
   /// Confirm that you (the buyer) received the item.
