@@ -66,12 +66,10 @@ contract Order is ChainlinkClient {
   event SellerPaid();
 
   constructor(
-    address payable _seller,
     address payable _buyer,
+    address payable _seller,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
-    uint256 _sellerDeadline,
-    uint256 _buyerDeadline,
     address _link
   ) public payable {
     emit OrderCreated();
@@ -83,12 +81,11 @@ contract Order is ChainlinkClient {
       // Useful if you're deploying to a local network.
       setChainlinkToken(_link);
     }
-    seller = _seller;
     buyer = _buyer;
+    seller = _seller;
     paymentToken = _paymentToken;
-    sellerDeadline = _sellerDeadline;
-    buyerDeadline = _buyerDeadline;
-    paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
+    // TODO: use create2 to pre-approve contract to accept tokens during deploy
+    // paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
     balance = _paymentAmount;
     createTime = now;
   }
