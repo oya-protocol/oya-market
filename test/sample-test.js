@@ -21,11 +21,17 @@ describe("Order", function() {
     const TestToken = await ethers.getContractFactory("Token");
     const LinkToken = await ethers.getContractFactory("Token");
     const Order = await ethers.getContractFactory("Order");
+
     const testToken = await TestToken.deploy("Test", "TEST");
-    console.log(testToken.address);
+    console.log("Test Token address:", testToken.address);
+
     await testToken.mint(buyerAddress, 100);
+    let buyerBalance = await testToken.balanceOf(buyerAddress);
+    expect(buyerBalance).to.equal(100);
+
     const linkToken = await LinkToken.deploy("Link", "LINK");
-    console.log(linkToken.address);
+    console.log("Test Token address:", linkToken.address);
+
     // TODO: Deploy Order using create2 to pre-transfer tokens to smart contract
     const order = await Order.deploy(
       buyerAddress,
@@ -34,27 +40,39 @@ describe("Order", function() {
       100,
       linkToken.address
     );
-    console.log(order.address);
+    console.log("Order contract address:", order.address);
+
     await testToken.connect(buyer).transfer(order.address, 100);
-    let buyerBalance = await testToken.balanceOf(buyerAddress);
-    console.log(buyerBalance.toString());
+    buyerBalance = await testToken.balanceOf(buyerAddress);
+    expect(buyerBalance).to.equal(0);
+
     await order.connect(buyer).demandRefund();
     buyerBalance = await testToken.balanceOf(buyerAddress);
-    console.log(buyerBalance.toString());
+    expect(buyerBalance).to.equal(100);
+
+    let sellerBalance = await testToken.balanceOf(sellerAddress);
+    console.log("Buyer balance:", buyerBalance.toString());
+    console.log("Seller balance:", sellerBalance.toString());
   });
 
-  it("Seller should be able to get paid", async function() {
+  it("Seller should be able to get paid if buyer accepts item", async function() {
     const [buyer, seller] = await ethers.getSigners();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     const TestToken = await ethers.getContractFactory("Token");
     const LinkToken = await ethers.getContractFactory("Token");
     const Order = await ethers.getContractFactory("Order");
+
     const testToken = await TestToken.deploy("Test", "TEST");
-    console.log(testToken.address);
+    console.log("Test Token address:", testToken.address);
+
     await testToken.mint(buyerAddress, 100);
+    let buyerBalance = await testToken.balanceOf(buyerAddress);
+    expect(buyerBalance).to.equal(100);
+
     const linkToken = await LinkToken.deploy("Link", "LINK");
-    console.log(linkToken.address);
+    console.log("Test Token address:", linkToken.address);
+
     // TODO: Deploy Order using create2 to pre-transfer tokens to smart contract
     const order = await Order.deploy(
       buyerAddress,
@@ -63,12 +81,17 @@ describe("Order", function() {
       100,
       linkToken.address
     );
-    console.log(order.address);
+    console.log("Order contract address:", order.address);
+
     await testToken.connect(buyer).transfer(order.address, 100);
-    let buyerBalance = await testToken.balanceOf(buyerAddress);
-    console.log(buyerBalance.toString());
+    buyerBalance = await testToken.balanceOf(buyerAddress);
+    expect(buyerBalance).to.equal(0);
+
     await order.connect(buyer).acceptItem();
     let sellerBalance = await testToken.balanceOf(sellerAddress);
-    console.log(sellerBalance.toString());
+    expect(sellerBalance).to.equal(100);
+
+    console.log("Buyer balance:", buyerBalance.toString());
+    console.log("Seller balance:", sellerBalance.toString());
   });
 });
