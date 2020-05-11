@@ -99,7 +99,7 @@ contract Order is ChainlinkClient {
   {
     emit OrderRefunded();
     state = State.Refunded;
-    paymentToken.transferFrom(address(this), buyer, balance);
+    paymentToken.transfer(buyer, balance);
   }
 
   /// Confirm that you (the seller) shipped the item.
@@ -121,7 +121,7 @@ contract Order is ChainlinkClient {
   {
     emit ItemAccepted();
     state = State.Accepted;
-    paySeller();
+    _paySeller();
   }
 
   /// Seller claims payment after buyer review deadline has passed
@@ -131,16 +131,16 @@ contract Order is ChainlinkClient {
   {
     emit ItemAccepted();
     state = State.Accepted;
-    paySeller();
+    _paySeller();
   }
 
   /// This function pays the seller
-  function paySeller()
-    public
+  function _paySeller()
+    internal
     inState(State.Accepted)
   {
     emit SellerPaid();
     state = State.Paid;
-    paymentToken.transferFrom(address(this), seller, balance);
+    paymentToken.transfer(seller, balance);
   }
 }
