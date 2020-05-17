@@ -58,7 +58,6 @@ contract OyaOrder is ChainlinkClient {
     _;
   }
 
-  event OrderCreated();
   event OrderRefunded();
   event TrackingSet();
   event ItemAccepted();
@@ -71,7 +70,6 @@ contract OyaOrder is ChainlinkClient {
     uint256 _paymentAmount,
     address _link
   ) public payable {
-    emit OrderCreated();
     // Set the address for the LINK token for the network.
     if(_link == address(0)) {
       // Useful for deploying to public networks.
