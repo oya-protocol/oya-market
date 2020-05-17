@@ -49,6 +49,10 @@ describe("Controller", function() {
       linkToken.address
     );
 
+    buyerOrders = await controller.getBuyerOrders(buyerAddress);
+    orderAddress = buyerOrders[0];
+    console.log("Order contract address:", orderAddress);
+
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
     console.log("Buyer balance:", buyerBalance.toString());
@@ -56,6 +60,10 @@ describe("Controller", function() {
     controllerBalance = await testToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
     console.log("Controller balance:", controllerBalance.toString());
+
+    orderBalance = await testToken.balanceOf(orderAddress);
+    expect(orderBalance).to.equal(100);
+    console.log("Order balance:", orderBalance.toString());
   });
 });
 

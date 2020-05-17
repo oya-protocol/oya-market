@@ -3,7 +3,8 @@ pragma solidity >=0.6.0 <0.7.0;
 import './OyaOrder.sol';
 
 contract OyaController {
-  OyaOrder[] public orders;
+  mapping (address => address[]) sellerOrders;
+  mapping (address => address[]) buyerOrders;
 
   event OrderCreated(address);
 
@@ -16,10 +17,10 @@ contract OyaController {
   )
     public
     payable
-    returns (OyaOrder newOrder)
+    returns (address newOrder)
   {
     require (msg.sender == _buyer);
-    newOrder = new OyaOrder(
+    OyaOrder newOrder = new OyaOrder(
       _buyer,
       _seller,
       _paymentToken,
@@ -29,10 +30,19 @@ contract OyaController {
 
     _paymentToken.transferFrom(msg.sender, address(newOrder), _paymentAmount);
 
-    orders.push(newOrder);
+    sellerOrders[_seller].push(address(newOrder));
+    buyerOrders[_buyer].push(address(newOrder));
 
     emit OrderCreated(address(newOrder));
 
-    return newOrder;
+    return address(newOrder);
+  }
+
+  function getBuyerOrders(address user) public view returns (address[] memory) {
+    return buyerOrders[user];
+  }
+
+  function getSellerOrders(address user) public view returns (address[] memory) {
+    return sellerOrders[user];
   }
 }
