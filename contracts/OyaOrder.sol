@@ -10,13 +10,12 @@ import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 // * Only require the payment for the item to be sent by buyer (DONE)
 // * Escrow the payments from buyer (DONE)
 // * Function for seller to set tracking details
-// * Function for buyer to reclaim funds if tracking details not set in time
-// * Function for seller to claim funds if item was confirmed delivered and wait time has passed
+// * Function for buyer to reclaim funds if tracking details not set in timed
 // * Track shipment via Chainlink EasyPost integration
-// * Calculate block to automatically unlock payment based on date of delivery
+// * Function for seller to claim funds if item was confirmed delivered and wait time has passe
 // * Add self-destruct function that gives gas refund and emits event
 
-contract Order is ChainlinkClient {
+contract OyaOrder is ChainlinkClient {
   address payable public seller;
   address payable public buyer;
   IERC20 public paymentToken;
@@ -95,14 +94,17 @@ contract Order is ChainlinkClient {
   function demandRefund()
     public
     onlyBuyer
+    /* TODO: this can happen in multiple states */
     inState(State.Created)
   {
+    /* TODO: get return shipment tracking from buyer */
+    /* TODO: check that return package was delivered? */
     emit OrderRefunded();
     state = State.Refunded;
     paymentToken.transfer(buyer, balance);
   }
 
-  /// Confirm that you (the seller) shipped the item.
+  /// Set tracking information for the delivery as the seller.
   function setTracking(/*TODO: fill in tracking details*/)
     public
     onlySeller
@@ -124,7 +126,7 @@ contract Order is ChainlinkClient {
     _paySeller();
   }
 
-  /// Seller claims payment after buyer review deadline has passed
+  /// Seller claims payment after buyer deadline has passed.
   function confirmReceivedAutomatically()
     public
     inState(State.Delivered)
@@ -134,7 +136,7 @@ contract Order is ChainlinkClient {
     _paySeller();
   }
 
-  /// This function pays the seller
+  /// This internal function pays the seller.
   function _paySeller()
     internal
     inState(State.Accepted)

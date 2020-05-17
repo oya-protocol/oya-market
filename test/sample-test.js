@@ -20,7 +20,7 @@ describe("Order", function() {
     sellerAddress = await seller.getAddress();
     const TestToken = await ethers.getContractFactory("Token");
     const LinkToken = await ethers.getContractFactory("Token");
-    const Order = await ethers.getContractFactory("Order");
+    const OyaOrder = await ethers.getContractFactory("OyaOrder");
 
     const testToken = await TestToken.deploy("Test", "TEST");
     console.log("Test Token address:", testToken.address);
@@ -33,7 +33,7 @@ describe("Order", function() {
     console.log("Test Token address:", linkToken.address);
 
     // TODO: Deploy Order using create2 to pre-transfer tokens to smart contract
-    const order = await Order.deploy(
+    const order = await OyaOrder.deploy(
       buyerAddress,
       sellerAddress,
       testToken.address,
@@ -61,7 +61,7 @@ describe("Order", function() {
     sellerAddress = await seller.getAddress();
     const TestToken = await ethers.getContractFactory("Token");
     const LinkToken = await ethers.getContractFactory("Token");
-    const Order = await ethers.getContractFactory("Order");
+    const OyaOrder = await ethers.getContractFactory("OyaOrder");
 
     const testToken = await TestToken.deploy("Test", "TEST");
     console.log("Test Token address:", testToken.address);
@@ -74,7 +74,7 @@ describe("Order", function() {
     console.log("Test Token address:", linkToken.address);
 
     // TODO: Deploy Order using create2 to pre-transfer tokens to smart contract
-    const order = await Order.deploy(
+    const order = await OyaOrder.deploy(
       buyerAddress,
       sellerAddress,
       testToken.address,
