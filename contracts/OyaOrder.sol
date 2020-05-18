@@ -104,6 +104,15 @@ contract OyaOrder is ChainlinkClient {
     state = State.Locked;
   }
 
+  function getTracking()
+    external
+    view
+    inState(State.Locked)
+    returns (bytes32, bytes32)
+  {
+    return (shippingProvider, trackingNumber);
+  }
+
   /// Confirm that you (the buyer) received and accept the item.
   /// This will unlock the payment.
   function acceptItem()
