@@ -20,6 +20,8 @@ contract OyaOrder is ChainlinkClient {
   address payable public buyer;
   IERC20 public paymentToken;
   uint256 public balance;
+  bytes32 public shippingProvider;
+  bytes32 public trackingNumber;
   /* TODO: define required variables for tracking */
 
   enum State { Created, Locked, Delivered }
@@ -51,7 +53,7 @@ contract OyaOrder is ChainlinkClient {
   }
 
   event BuyerRefunded();
-  event TrackingSet();
+  event TrackingSet(bytes32, bytes32);
   event SellerPaid();
 
   constructor(
@@ -88,13 +90,17 @@ contract OyaOrder is ChainlinkClient {
   }
 
   /// Set tracking information for the delivery as the seller.
-  function setTracking(/*TODO: fill in tracking details*/)
+  function setTracking(
+    bytes32 _shippingProvider,
+    bytes32 _trackingNumber
+  )
     public
     onlySeller
     inState(State.Created)
   {
-    emit TrackingSet();
-    /* TODO: set tracking details */
+    shippingProvider = _shippingProvider;
+    trackingNumber = _trackingNumber;
+    emit TrackingSet(shippingProvider, trackingNumber);
     state = State.Locked;
   }
 
