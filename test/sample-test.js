@@ -1,21 +1,8 @@
 const { expect } = require("chai");
 const OyaOrder = require('../artifacts/OyaOrder');
 
-describe("Greeter", function() {
-  it("Should return the new greeting once it's changed", async function() {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-
-    await greeter.deployed();
-    expect(await greeter.greet()).to.equal("Hello, world!");
-
-    await greeter.setGreeting("Hola, mundo!");
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
-  });
-});
-
 describe("Controller", function() {
-  it("Controller should be able to deploy Order", async function() {
+  it("Controller should be able to deploy order contract", async function() {
     const [buyer, seller] = await ethers.getSigners();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
@@ -24,23 +11,16 @@ describe("Controller", function() {
     const OyaController = await ethers.getContractFactory("OyaController");
 
     const testToken = await TestToken.deploy("Test", "TEST");
-    console.log("Test Token address:", testToken.address);
 
     await testToken.mint(buyerAddress, 100);
     let buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
-    console.log("Test Token address:", linkToken.address);
 
     const controller = await OyaController.deploy();
-    console.log("Controller contract address:", controller.address);
 
     await testToken.connect(buyer).approve(controller.address, 100);
-
-    controller.on("OrderCreated", (orderAddress) => {
-      console.log("Order contract address:", orderAddress);
-    });
 
     const order = await controller.connect(buyer).createOrder(
       buyerAddress,
@@ -79,23 +59,16 @@ describe("Order", function() {
     const OyaController = await ethers.getContractFactory("OyaController");
 
     const testToken = await TestToken.deploy("Test", "TEST");
-    console.log("Test Token address:", testToken.address);
 
     await testToken.mint(buyerAddress, 100);
     let buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
-    console.log("Test Token address:", linkToken.address);
 
     const controller = await OyaController.deploy();
-    console.log("Controller contract address:", controller.address);
 
     await testToken.connect(buyer).approve(controller.address, 100);
-
-    controller.on("OrderCreated", (orderAddress) => {
-      console.log("Order contract address:", orderAddress);
-    });
 
     await controller.connect(buyer).createOrder(
       buyerAddress,
@@ -107,19 +80,15 @@ describe("Order", function() {
 
     buyerOrders = await controller.getBuyerOrders(buyerAddress);
     orderAddress = buyerOrders[0];
-    console.log("Order contract address:", orderAddress);
 
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
-    console.log("Buyer balance:", buyerBalance.toString());
 
     controllerBalance = await testToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
-    console.log("Controller balance:", controllerBalance.toString());
 
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
-    console.log("Order balance:", orderBalance.toString());
 
     let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
@@ -145,23 +114,16 @@ describe("Order", function() {
     const OyaController = await ethers.getContractFactory("OyaController");
 
     const testToken = await TestToken.deploy("Test", "TEST");
-    console.log("Test Token address:", testToken.address);
 
     await testToken.mint(buyerAddress, 100);
     let buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
-    console.log("Test Token address:", linkToken.address);
 
     const controller = await OyaController.deploy();
-    console.log("Controller contract address:", controller.address);
 
     await testToken.connect(buyer).approve(controller.address, 100);
-
-    controller.on("OrderCreated", (orderAddress) => {
-      console.log("Order contract address:", orderAddress);
-    });
 
     await controller.connect(buyer).createOrder(
       buyerAddress,
@@ -173,19 +135,15 @@ describe("Order", function() {
 
     buyerOrders = await controller.getBuyerOrders(buyerAddress);
     orderAddress = buyerOrders[0];
-    console.log("Order contract address:", orderAddress);
 
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
-    console.log("Buyer balance:", buyerBalance.toString());
 
     controllerBalance = await testToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
-    console.log("Controller balance:", controllerBalance.toString());
 
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
-    console.log("Order balance:", orderBalance.toString());
 
     let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 

@@ -20,7 +20,7 @@ contract OyaController {
     returns (OyaOrder newOrder)
   {
     require (msg.sender == _buyer);
-    OyaOrder newOrder = new OyaOrder(
+    newOrder = new OyaOrder(
       _buyer,
       _seller,
       _paymentToken,

@@ -12,7 +12,7 @@ import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 // * Function for seller to set tracking details
 // * Function for buyer to reclaim funds if tracking details not set in timed
 // * Track shipment via Chainlink EasyPost integration
-// * Function for seller to claim funds if item was confirmed delivered and wait time has passe
+// * Function for seller to claim funds if item was confirmed delivered and wait time has passed
 // * Add self-destruct function that gives gas refund and emits event
 
 contract OyaOrder is ChainlinkClient {
