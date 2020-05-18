@@ -20,19 +20,11 @@ contract OyaOrder is ChainlinkClient {
   address payable public buyer;
   IERC20 public paymentToken;
   uint256 public balance;
-  uint256 public sellerDeadline;
-  uint256 public buyerDeadline;
-  uint256 public createTime;
   /* TODO: define required variables for tracking */
 
-  enum State { Created, Refunded, Locked, Accepted, Delivered, Paid }
+  enum State { Created, Locked, Delivered }
   // The state variable has a default value of the first member, `State.created`
   State public state;
-
-  modifier condition(bool _condition) {
-    require(_condition);
-    _;
-  }
 
   modifier onlyBuyer() {
     require(
@@ -58,9 +50,8 @@ contract OyaOrder is ChainlinkClient {
     _;
   }
 
-  event OrderRefunded();
+  event BuyerRefunded();
   event TrackingSet();
-  event ItemAccepted();
   event SellerPaid();
 
   constructor(
@@ -81,10 +72,8 @@ contract OyaOrder is ChainlinkClient {
     buyer = _buyer;
     seller = _seller;
     paymentToken = _paymentToken;
-    // TODO: use create2 to pre-approve contract to accept tokens during deploy
-    // paymentToken.transferFrom(_buyer, address(this), _paymentAmount);
     balance = _paymentAmount;
-    createTime = now;
+    // createTime = now;
   }
 
   /// Confirm that you (the buyer) received the item.
@@ -92,14 +81,10 @@ contract OyaOrder is ChainlinkClient {
   function demandRefund()
     public
     onlyBuyer
-    /* TODO: this can happen in multiple states */
-    inState(State.Created)
   {
     /* TODO: get return shipment tracking from buyer */
     /* TODO: check that return package was delivered? */
-    emit OrderRefunded();
-    state = State.Refunded;
-    paymentToken.transfer(buyer, balance);
+    _refundBuyer();
   }
 
   /// Set tracking information for the delivery as the seller.
@@ -119,8 +104,6 @@ contract OyaOrder is ChainlinkClient {
     public
     onlyBuyer
   {
-    emit ItemAccepted();
-    state = State.Accepted;
     _paySeller();
   }
 
@@ -129,18 +112,23 @@ contract OyaOrder is ChainlinkClient {
     public
     inState(State.Delivered)
   {
-    emit ItemAccepted();
-    state = State.Accepted;
     _paySeller();
   }
 
   /// This internal function pays the seller.
   function _paySeller()
     internal
-    inState(State.Accepted)
   {
     emit SellerPaid();
-    state = State.Paid;
     paymentToken.transfer(seller, balance);
+    selfdestruct(seller);
+  }
+
+  function _refundBuyer()
+    internal
+  {
+    emit BuyerRefunded();
+    paymentToken.transfer(buyer, balance);
+    selfdestruct(buyer);
   }
 }
