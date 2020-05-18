@@ -17,7 +17,7 @@ contract OyaController {
   )
     public
     payable
-    returns (address newOrder)
+    returns (OyaOrder newOrder)
   {
     require (msg.sender == _buyer);
     OyaOrder newOrder = new OyaOrder(
@@ -35,7 +35,7 @@ contract OyaController {
 
     emit OrderCreated(address(newOrder));
 
-    return address(newOrder);
+    return newOrder;
   }
 
   function getBuyerOrders(address user) public view returns (address[] memory) {

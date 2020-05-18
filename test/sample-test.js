@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+const OyaOrder = require('../artifacts/OyaOrder');
 
 describe("Greeter", function() {
   it("Should return the new greeting once it's changed", async function() {
@@ -70,11 +71,12 @@ describe("Controller", function() {
 describe("Order", function() {
   it("Buyer should be able to get refund", async function() {
     const [buyer, seller] = await ethers.getSigners();
+    const provider = waffle.provider;
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     const TestToken = await ethers.getContractFactory("Token");
     const LinkToken = await ethers.getContractFactory("Token");
-    const OyaOrder = await ethers.getContractFactory("OyaOrder");
+    const OyaController = await ethers.getContractFactory("OyaController");
 
     const testToken = await TestToken.deploy("Test", "TEST");
     console.log("Test Token address:", testToken.address);
@@ -86,36 +88,61 @@ describe("Order", function() {
     const linkToken = await LinkToken.deploy("Link", "LINK");
     console.log("Test Token address:", linkToken.address);
 
-    // TODO: Deploy Order using create2 to pre-transfer tokens to smart contract
-    const order = await OyaOrder.deploy(
+    const controller = await OyaController.deploy();
+    console.log("Controller contract address:", controller.address);
+
+    await testToken.connect(buyer).approve(controller.address, 100);
+
+    controller.on("OrderCreated", (orderAddress) => {
+      console.log("Order contract address:", orderAddress);
+    });
+
+    await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       testToken.address,
       100,
       linkToken.address
     );
-    console.log("Order contract address:", order.address);
 
-    await testToken.connect(buyer).transfer(order.address, 100);
+    buyerOrders = await controller.getBuyerOrders(buyerAddress);
+    orderAddress = buyerOrders[0];
+    console.log("Order contract address:", orderAddress);
+
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
+    console.log("Buyer balance:", buyerBalance.toString());
+
+    controllerBalance = await testToken.balanceOf(controller.address);
+    expect(controllerBalance).to.equal(0);
+    console.log("Controller balance:", controllerBalance.toString());
+
+    orderBalance = await testToken.balanceOf(orderAddress);
+    expect(orderBalance).to.equal(100);
+    console.log("Order balance:", orderBalance.toString());
+
+    let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(buyer).demandRefund();
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
+    orderBalance = await testToken.balanceOf(orderAddress);
+    expect(orderBalance).to.equal(0);
 
     let sellerBalance = await testToken.balanceOf(sellerAddress);
     console.log("Buyer balance:", buyerBalance.toString());
     console.log("Seller balance:", sellerBalance.toString());
+    console.log("Order balance:", orderBalance.toString());
   });
 
   it("Seller should be able to get paid if buyer accepts item", async function() {
     const [buyer, seller] = await ethers.getSigners();
+    const provider = waffle.provider;
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     const TestToken = await ethers.getContractFactory("Token");
     const LinkToken = await ethers.getContractFactory("Token");
-    const OyaOrder = await ethers.getContractFactory("OyaOrder");
+    const OyaController = await ethers.getContractFactory("OyaController");
 
     const testToken = await TestToken.deploy("Test", "TEST");
     console.log("Test Token address:", testToken.address);
@@ -127,25 +154,49 @@ describe("Order", function() {
     const linkToken = await LinkToken.deploy("Link", "LINK");
     console.log("Test Token address:", linkToken.address);
 
-    // TODO: Deploy Order using create2 to pre-transfer tokens to smart contract
-    const order = await OyaOrder.deploy(
+    const controller = await OyaController.deploy();
+    console.log("Controller contract address:", controller.address);
+
+    await testToken.connect(buyer).approve(controller.address, 100);
+
+    controller.on("OrderCreated", (orderAddress) => {
+      console.log("Order contract address:", orderAddress);
+    });
+
+    await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       testToken.address,
       100,
       linkToken.address
     );
-    console.log("Order contract address:", order.address);
 
-    await testToken.connect(buyer).transfer(order.address, 100);
+    buyerOrders = await controller.getBuyerOrders(buyerAddress);
+    orderAddress = buyerOrders[0];
+    console.log("Order contract address:", orderAddress);
+
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
+    console.log("Buyer balance:", buyerBalance.toString());
+
+    controllerBalance = await testToken.balanceOf(controller.address);
+    expect(controllerBalance).to.equal(0);
+    console.log("Controller balance:", controllerBalance.toString());
+
+    orderBalance = await testToken.balanceOf(orderAddress);
+    expect(orderBalance).to.equal(100);
+    console.log("Order balance:", orderBalance.toString());
+
+    let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(buyer).acceptItem();
     let sellerBalance = await testToken.balanceOf(sellerAddress);
     expect(sellerBalance).to.equal(100);
+    orderBalance = await testToken.balanceOf(orderAddress);
+    expect(orderBalance).to.equal(0);
 
     console.log("Buyer balance:", buyerBalance.toString());
     console.log("Seller balance:", sellerBalance.toString());
+    console.log("Order balance:", orderBalance.toString());
   });
 });
