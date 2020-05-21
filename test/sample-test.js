@@ -9,7 +9,7 @@ describe("Controller", function() {
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
-    const TestToken = new ethers.ContractFactory(
+    const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
       oya
@@ -25,11 +25,11 @@ describe("Controller", function() {
       oya
     );
 
-    const testToken = await TestToken.deploy("Test", "TEST");
-    await testToken.deployed();
+    const daiToken = await Dai.deploy("Dai", "DAI");
+    await daiToken.deployed();
 
-    await testToken.mint(buyerAddress, 100);
-    let buyerBalance = await testToken.balanceOf(buyerAddress);
+    await daiToken.mint(buyerAddress, 100);
+    let buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
@@ -38,14 +38,14 @@ describe("Controller", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
 
-    await testToken.connect(buyer).approve(controller.address, 100);
+    await daiToken.connect(buyer).approve(controller.address, 100);
 
     let orderAddress;
 
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      testToken.address,
+      daiToken.address,
       100,
       linkToken.address
     );
@@ -57,13 +57,13 @@ describe("Controller", function() {
 
     await tx.wait(1);
 
-    buyerBalance = await testToken.balanceOf(buyerAddress);
+    buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
 
-    controllerBalance = await testToken.balanceOf(controller.address);
+    controllerBalance = await daiToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
 
-    orderBalance = await testToken.balanceOf(orderAddress);
+    orderBalance = await daiToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
   });
 });
@@ -74,7 +74,7 @@ describe("Order", function() {
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
-    const TestToken = new ethers.ContractFactory(
+    const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
       oya
@@ -90,11 +90,11 @@ describe("Order", function() {
       oya
     );
 
-    const testToken = await TestToken.deploy("Test", "TEST");
-    await testToken.deployed();
+    const daiToken = await Dai.deploy("Dai", "DAI");
+    await daiToken.deployed();
 
-    await testToken.mint(buyerAddress, 100);
-    let buyerBalance = await testToken.balanceOf(buyerAddress);
+    await daiToken.mint(buyerAddress, 100);
+    let buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
@@ -103,14 +103,14 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
 
-    await testToken.connect(buyer).approve(controller.address, 100);
+    await daiToken.connect(buyer).approve(controller.address, 100);
 
     let orderAddress;
 
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      testToken.address,
+      daiToken.address,
       100,
       linkToken.address
     );
@@ -123,13 +123,13 @@ describe("Order", function() {
 
     await tx.wait(1);
 
-    buyerBalance = await testToken.balanceOf(buyerAddress);
+    buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
 
-    controllerBalance = await testToken.balanceOf(controller.address);
+    controllerBalance = await daiToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
 
-    orderBalance = await testToken.balanceOf(orderAddress);
+    orderBalance = await daiToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
 
     const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
@@ -143,7 +143,7 @@ describe("Order", function() {
     expect(ethers.utils.parseBytes32String(trackingInfo[0])).to.equal("USPS");
     expect(ethers.utils.parseBytes32String(trackingInfo[1])).to.equal("954901983837217");
 
-    let sellerBalance = await testToken.balanceOf(sellerAddress);
+    let sellerBalance = await daiToken.balanceOf(sellerAddress);
   });
 
   it("Buyer should be able to get refund", async function() {
@@ -151,7 +151,7 @@ describe("Order", function() {
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
-    const TestToken = new ethers.ContractFactory(
+    const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
       oya
@@ -167,11 +167,11 @@ describe("Order", function() {
       oya
     );
 
-    const testToken = await TestToken.deploy("Test", "TEST");
-    await testToken.deployed();
+    const daiToken = await Dai.deploy("Dai", "DAI");
+    await daiToken.deployed();
 
-    await testToken.mint(buyerAddress, 100);
-    let buyerBalance = await testToken.balanceOf(buyerAddress);
+    await daiToken.mint(buyerAddress, 100);
+    let buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
@@ -180,14 +180,14 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
 
-    await testToken.connect(buyer).approve(controller.address, 100);
+    await daiToken.connect(buyer).approve(controller.address, 100);
 
     let orderAddress;
 
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      testToken.address,
+      daiToken.address,
       100,
       linkToken.address
     );
@@ -199,24 +199,24 @@ describe("Order", function() {
 
     await tx.wait(1);
 
-    buyerBalance = await testToken.balanceOf(buyerAddress);
+    buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
 
-    controllerBalance = await testToken.balanceOf(controller.address);
+    controllerBalance = await daiToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
 
-    orderBalance = await testToken.balanceOf(orderAddress);
+    orderBalance = await daiToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
 
     const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(buyer).demandRefund();
-    buyerBalance = await testToken.balanceOf(buyerAddress);
+    buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
-    orderBalance = await testToken.balanceOf(orderAddress);
+    orderBalance = await daiToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(0);
 
-    let sellerBalance = await testToken.balanceOf(sellerAddress);
+    let sellerBalance = await daiToken.balanceOf(sellerAddress);
   });
 
   it("Seller should be able to get paid if buyer accepts item", async function() {
@@ -224,7 +224,7 @@ describe("Order", function() {
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
-    const TestToken = new ethers.ContractFactory(
+    const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
       oya
@@ -240,11 +240,11 @@ describe("Order", function() {
       oya
     );
 
-    const testToken = await TestToken.deploy("Test", "TEST");
-    await testToken.deployed();
+    const daiToken = await Dai.deploy("Dai", "DAI");
+    await daiToken.deployed();
 
-    await testToken.mint(buyerAddress, 100);
-    let buyerBalance = await testToken.balanceOf(buyerAddress);
+    await daiToken.mint(buyerAddress, 100);
+    let buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(100);
 
     const linkToken = await LinkToken.deploy("Link", "LINK");
@@ -253,14 +253,14 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
 
-    await testToken.connect(buyer).approve(controller.address, 100);
+    await daiToken.connect(buyer).approve(controller.address, 100);
 
     let orderAddress;
 
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      testToken.address,
+      daiToken.address,
       100,
       linkToken.address
     );
@@ -272,21 +272,21 @@ describe("Order", function() {
 
     await tx.wait(1);
 
-    buyerBalance = await testToken.balanceOf(buyerAddress);
+    buyerBalance = await daiToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
 
-    controllerBalance = await testToken.balanceOf(controller.address);
+    controllerBalance = await daiToken.balanceOf(controller.address);
     expect(controllerBalance).to.equal(0);
 
-    orderBalance = await testToken.balanceOf(orderAddress);
+    orderBalance = await daiToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
 
     const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(buyer).acceptItem();
-    let sellerBalance = await testToken.balanceOf(sellerAddress);
+    let sellerBalance = await daiToken.balanceOf(sellerAddress);
     expect(sellerBalance).to.equal(100);
-    orderBalance = await testToken.balanceOf(orderAddress);
+    orderBalance = await daiToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(0);
   });
 });
