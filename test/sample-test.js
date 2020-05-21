@@ -52,7 +52,6 @@ describe("Controller", function() {
 
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
-      console.log("Event captured:", orderAddress);
       event.removeListener();
     });
 
@@ -118,7 +117,7 @@ describe("Order", function() {
 
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
-      console.log("Event captured:", orderAddress);
+
       event.removeListener();
     });
 
@@ -195,7 +194,6 @@ describe("Order", function() {
 
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
-      console.log("Event captured:", orderAddress);
       event.removeListener();
     });
 
@@ -269,7 +267,6 @@ describe("Order", function() {
 
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
-      console.log("Event captured:", orderAddress);
       event.removeListener();
     });
 
