@@ -53,9 +53,10 @@ describe("Controller", function() {
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
       console.log("Event captured:", orderAddress);
+      event.removeListener();
     });
 
-    await tx.wait(2);
+    await tx.wait(1);
 
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
@@ -65,8 +66,6 @@ describe("Controller", function() {
 
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
-
-    let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
   });
 });
 
@@ -120,9 +119,10 @@ describe("Order", function() {
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
       console.log("Event captured:", orderAddress);
+      event.removeListener();
     });
 
-    await tx.wait(2);
+    await tx.wait(1);
 
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
@@ -133,20 +133,18 @@ describe("Order", function() {
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
 
-    let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
+    const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(seller).setTracking(
       ethers.utils.formatBytes32String("USPS"),
       ethers.utils.formatBytes32String("954901983837217")
     );
-    let trackingInfo = await order.getTracking();
+
+    const trackingInfo = await order.connect(buyer).getTracking();
     expect(ethers.utils.parseBytes32String(trackingInfo[0])).to.equal("USPS");
     expect(ethers.utils.parseBytes32String(trackingInfo[1])).to.equal("954901983837217");
 
     let sellerBalance = await testToken.balanceOf(sellerAddress);
-    console.log("Buyer balance:", buyerBalance.toString());
-    console.log("Seller balance:", sellerBalance.toString());
-    console.log("Order balance:", orderBalance.toString());
   });
 
   it("Buyer should be able to get refund", async function() {
@@ -198,9 +196,10 @@ describe("Order", function() {
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
       console.log("Event captured:", orderAddress);
+      event.removeListener();
     });
 
-    await tx.wait(2);
+    await tx.wait(1);
 
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
@@ -211,7 +210,7 @@ describe("Order", function() {
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
 
-    let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
+    const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(buyer).demandRefund();
     buyerBalance = await testToken.balanceOf(buyerAddress);
@@ -220,9 +219,6 @@ describe("Order", function() {
     expect(orderBalance).to.equal(0);
 
     let sellerBalance = await testToken.balanceOf(sellerAddress);
-    console.log("Buyer balance:", buyerBalance.toString());
-    console.log("Seller balance:", sellerBalance.toString());
-    console.log("Order balance:", orderBalance.toString());
   });
 
   it("Seller should be able to get paid if buyer accepts item", async function() {
@@ -274,9 +270,10 @@ describe("Order", function() {
     controller.on("OrderCreated", (newOrder, event) => {
       orderAddress = newOrder;
       console.log("Event captured:", orderAddress);
+      event.removeListener();
     });
 
-    await tx.wait(2);
+    await tx.wait(1);
 
     buyerBalance = await testToken.balanceOf(buyerAddress);
     expect(buyerBalance).to.equal(0);
@@ -287,16 +284,12 @@ describe("Order", function() {
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(100);
 
-    let order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
+    const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
     await order.connect(buyer).acceptItem();
     let sellerBalance = await testToken.balanceOf(sellerAddress);
     expect(sellerBalance).to.equal(100);
     orderBalance = await testToken.balanceOf(orderAddress);
     expect(orderBalance).to.equal(0);
-
-    console.log("Buyer balance:", buyerBalance.toString());
-    console.log("Seller balance:", sellerBalance.toString());
-    console.log("Order balance:", orderBalance.toString());
   });
 });
