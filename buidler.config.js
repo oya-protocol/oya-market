@@ -23,5 +23,15 @@ module.exports = {
   gasReporter: {
     currency: 'USD',
     gasPrice: 21
-  }
+  },
+  defaultNetwork: 'localhost',
+  networks: {
+    localhost: {
+      url: 'http://localhost:8545',
+      /*
+      accounts: {
+        mnemonic: "SOME MNEMONIC TEXT HERE"
+      },*/
+    },
+  },
 };
