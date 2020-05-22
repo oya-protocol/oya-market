@@ -28,6 +28,13 @@ contract OyaOrder is ChainlinkClient {
   OyaController public controller;
   uint256 deliveryDate;
 
+
+  struct Tracking {
+    bool exists;
+    address seller;
+    address buyer;
+  }
+
   enum State { Created, Locked, Delivered }
   // The state variable has a default value of the first member, `State.created`
   State public state;
@@ -82,13 +89,11 @@ contract OyaOrder is ChainlinkClient {
     controller = OyaController(msg.sender);
   }
 
-  function demandRefund()
+  function cancelOrder()
     public
-    onlyBuyer
     inState(State.Created)
   {
-    /* TODO: get return shipment tracking from buyer */
-    /* TODO: check that return package was delivered? */
+    require(msg.sender == buyer || msg.sender == seller);
     _refundBuyer();
   }
 
