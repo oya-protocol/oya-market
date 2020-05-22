@@ -5,10 +5,11 @@ const Token = require('../artifacts/Token');
 
 describe("Controller", function() {
   it("Controller should be able to deploy order contract", async function() {
-    const [oya, buyer, seller] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
+    arbitratorAddress = await arbitrator.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -59,6 +60,7 @@ describe("Controller", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
+      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -84,10 +86,11 @@ describe("Controller", function() {
 
 describe("Order", function() {
   it("Seller should be able to set tracking information", async function() {
-    const [oya, buyer, seller] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
+    arbitratorAddress = await arbitrator.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -138,6 +141,7 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
+      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -175,10 +179,11 @@ describe("Order", function() {
   });
 
   it("Buyer should be able to cancel order", async function() {
-    const [oya, buyer, seller] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
+    arbitratorAddress = await arbitrator.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -229,6 +234,7 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
+      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -262,10 +268,11 @@ describe("Order", function() {
   });
 
   it("Seller should be able to cancel order", async function() {
-    const [oya, buyer, seller] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
+    arbitratorAddress = await arbitrator.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -316,6 +323,7 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
+      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -349,10 +357,11 @@ describe("Order", function() {
   });
 
   it("Seller should be able to get paid if buyer accepts item", async function() {
-    const [oya, buyer, seller] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
+    arbitratorAddress = await arbitrator.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -403,6 +412,7 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
+      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address

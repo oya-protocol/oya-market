@@ -20,6 +20,7 @@ import "@nomiclabs/buidler/console.sol";
 contract OyaOrder is ChainlinkClient {
   address payable public seller;
   address payable public buyer;
+  address payable public arbitrator;
   IERC20 public paymentToken;
   uint256 public balance;
   bytes32 public shippingProvider;
@@ -35,7 +36,7 @@ contract OyaOrder is ChainlinkClient {
     address buyer;
   }
 
-  enum State { Created, Locked, Delivered }
+  enum State { Created, Locked, Delivered, Dispute }
   // The state variable has a default value of the first member, `State.created`
   State public state;
 
@@ -65,11 +66,13 @@ contract OyaOrder is ChainlinkClient {
 
   event BuyerRefunded();
   event TrackingSet(bytes32, bytes32);
+  event ReturnTrackingSet(bytes32, bytes32);
   event SellerPaid();
 
   constructor(
     address payable _buyer,
     address payable _seller,
+    address payable _arbitrator,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
     address _link
@@ -84,6 +87,7 @@ contract OyaOrder is ChainlinkClient {
     }
     buyer = _buyer;
     seller = _seller;
+    arbitrator = _arbitrator;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
     controller = OyaController(msg.sender);
@@ -97,6 +101,31 @@ contract OyaOrder is ChainlinkClient {
     _refundBuyer();
   }
 
+  // Dispute cases that require an arbitrator
+  function demandRefund()
+    public
+    onlyBuyer
+    inState(State.Locked)
+  {
+    state = State.Dispute;
+  }
+
+  function returnItem(
+    bytes32 _shippingProvider,
+    bytes32 _trackingNumber
+  )
+    public
+    onlyBuyer
+  {
+    emit ReturnTrackingSet(_shippingProvider, _trackingNumber);
+    state = State.Dispute;
+  }
+
+  // Lock order before shipping
+  function acceptOrder() public onlySeller inState(State.Created) {
+    state = State.Locked;
+  }
+
   /// Set tracking information for the delivery as the seller.
   function setTracking(
     bytes32 _shippingProvider,
@@ -104,7 +133,6 @@ contract OyaOrder is ChainlinkClient {
   )
     public
     onlySeller
-    inState(State.Created)
   {
     shippingProvider = _shippingProvider;
     trackingNumber = _trackingNumber;

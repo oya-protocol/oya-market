@@ -10,6 +10,7 @@ contract OyaController {
     bool exists;
     address seller;
     address buyer;
+    address arbitrator;
   }
 
   mapping (address => Order) orders;
@@ -22,6 +23,7 @@ contract OyaController {
   function createOrder(
     address payable _buyer,
     address payable _seller,
+    address payable _arbitrator,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
     address _link
@@ -33,6 +35,7 @@ contract OyaController {
     OyaOrder newOrder = new OyaOrder(
       _buyer,
       _seller,
+      _arbitrator,
       _paymentToken,
       _paymentAmount,
       _link
@@ -42,7 +45,7 @@ contract OyaController {
 
     emit OrderCreated(address(newOrder));
 
-    orders[address(newOrder)] = Order(true, _seller, _buyer);
+    orders[address(newOrder)] = Order(true, _seller, _buyer, _arbitrator);
   }
 
   function setToken(address tokenAddress) public {
