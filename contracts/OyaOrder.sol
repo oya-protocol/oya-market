@@ -1,7 +1,9 @@
 pragma solidity >=0.6.0 <0.7.0;
 
+import './OyaController.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "@nomiclabs/buidler/console.sol";
 
 // TODO:
 // * Remove unused boilerplate (DONE)
@@ -22,7 +24,7 @@ contract OyaOrder is ChainlinkClient {
   uint256 public balance;
   bytes32 public shippingProvider;
   bytes32 public trackingNumber;
-  /* TODO: define required variables for tracking */
+  OyaController public controller;
 
   enum State { Created, Locked, Delivered }
   // The state variable has a default value of the first member, `State.created`
@@ -75,7 +77,7 @@ contract OyaOrder is ChainlinkClient {
     seller = _seller;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
-    // createTime = now;
+    controller = OyaController(msg.sender);
   }
 
   /// Confirm that you (the buyer) received the item.
@@ -119,6 +121,7 @@ contract OyaOrder is ChainlinkClient {
     public
     onlyBuyer
   {
+    _reward(buyer);
     _paySeller();
   }
 
@@ -136,6 +139,8 @@ contract OyaOrder is ChainlinkClient {
   {
     emit SellerPaid();
     paymentToken.transfer(seller, balance);
+    _reward(seller);
+    controller.clearOrder();
     selfdestruct(seller);
   }
 
@@ -144,6 +149,13 @@ contract OyaOrder is ChainlinkClient {
   {
     emit BuyerRefunded();
     paymentToken.transfer(buyer, balance);
+    controller.clearOrder();
     selfdestruct(buyer);
+  }
+
+  function _reward(address recipient)
+    internal
+  {
+    controller.reward(recipient);
   }
 }

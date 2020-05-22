@@ -19,6 +19,11 @@ describe("Controller", function() {
       Token.bytecode,
       oya
     );
+    const OyaToken = new ethers.ContractFactory(
+      Token.abi,
+      Token.bytecode,
+      oya
+    );
     const OyaControllerFactory = new ethers.ContractFactory(
       OyaController.abi,
       OyaController.bytecode,
@@ -35,8 +40,17 @@ describe("Controller", function() {
     const linkToken = await LinkToken.deploy("Link", "LINK");
     await linkToken.deployed();
 
+    const oyaToken = await OyaToken.deploy("Oya", "OYA");
+    await oyaToken.deployed();
+
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
+    await controller.setToken(oyaToken.address);
+
+    await oyaToken.connect(oya).grantRole(
+      ethers.utils.formatBytes32String("MINTER_ROLE"),
+      controller.address
+    );
 
     await daiToken.connect(buyer).approve(controller.address, 100);
 
@@ -84,6 +98,11 @@ describe("Order", function() {
       Token.bytecode,
       oya
     );
+    const OyaToken = new ethers.ContractFactory(
+      Token.abi,
+      Token.bytecode,
+      oya
+    );
     const OyaControllerFactory = new ethers.ContractFactory(
       OyaController.abi,
       OyaController.bytecode,
@@ -100,8 +119,17 @@ describe("Order", function() {
     const linkToken = await LinkToken.deploy("Link", "LINK");
     await linkToken.deployed();
 
+    const oyaToken = await OyaToken.deploy("Oya", "OYA");
+    await oyaToken.deployed();
+
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
+    await controller.setToken(oyaToken.address);
+
+    await oyaToken.connect(oya).grantRole(
+      ethers.utils.formatBytes32String("MINTER_ROLE"),
+      controller.address
+    );
 
     await daiToken.connect(buyer).approve(controller.address, 100);
 
@@ -161,6 +189,11 @@ describe("Order", function() {
       Token.bytecode,
       oya
     );
+    const OyaToken = new ethers.ContractFactory(
+      Token.abi,
+      Token.bytecode,
+      oya
+    );
     const OyaControllerFactory = new ethers.ContractFactory(
       OyaController.abi,
       OyaController.bytecode,
@@ -177,8 +210,17 @@ describe("Order", function() {
     const linkToken = await LinkToken.deploy("Link", "LINK");
     await linkToken.deployed();
 
+    const oyaToken = await OyaToken.deploy("Oya", "OYA");
+    await oyaToken.deployed();
+
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
+    await controller.setToken(oyaToken.address);
+
+    await oyaToken.connect(oya).grantRole(
+      ethers.utils.formatBytes32String("MINTER_ROLE"),
+      controller.address
+    );
 
     await daiToken.connect(buyer).approve(controller.address, 100);
 
@@ -234,6 +276,11 @@ describe("Order", function() {
       Token.bytecode,
       oya
     );
+    const OyaToken = new ethers.ContractFactory(
+      Token.abi,
+      Token.bytecode,
+      oya
+    );
     const OyaControllerFactory = new ethers.ContractFactory(
       OyaController.abi,
       OyaController.bytecode,
@@ -250,8 +297,17 @@ describe("Order", function() {
     const linkToken = await LinkToken.deploy("Link", "LINK");
     await linkToken.deployed();
 
+    const oyaToken = await OyaToken.deploy("Oya", "OYA");
+    await oyaToken.deployed();
+
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
+    await controller.setToken(oyaToken.address);
+
+    await oyaToken.connect(oya).grantRole(
+      ethers.utils.id("MINTER_ROLE"),
+      controller.address
+    );
 
     await daiToken.connect(buyer).approve(controller.address, 100);
 
