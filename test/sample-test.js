@@ -5,11 +5,12 @@ const Token = require('../artifacts/Token');
 
 describe("Controller", function() {
   it("Controller should be able to deploy order contract", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -44,11 +45,11 @@ describe("Controller", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -87,11 +88,12 @@ describe("Controller", function() {
 
 describe("Order", function() {
   it("Seller should be able to set tracking information", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -126,11 +128,11 @@ describe("Order", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -181,11 +183,12 @@ describe("Order", function() {
   });
 
   it("Buyer should be able to cancel order", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -220,11 +223,11 @@ describe("Order", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -271,11 +274,12 @@ describe("Order", function() {
   });
 
   it("Seller should be able to cancel order", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -310,11 +314,11 @@ describe("Order", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -361,11 +365,12 @@ describe("Order", function() {
   });
 
   it("Seller should be able to get paid if buyer accepts item", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -400,11 +405,11 @@ describe("Order", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -455,11 +460,12 @@ describe("Order", function() {
   });
 
   it("Buyer should be able to get paid if arbitrator rules in their favor", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -494,11 +500,11 @@ describe("Order", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -548,11 +554,12 @@ describe("Order", function() {
   });
 
   it("Seller should be able to get paid if arbitrator rules in their favor", async function() {
-    const [oya, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [oya, buyer, seller, arbitrator, updater] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    updaterAddress = await updater.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -587,11 +594,11 @@ describe("Order", function() {
     const oyaToken = await OyaToken.deploy("Oya", "OYA");
     await oyaToken.deployed();
 
-    const controller = await OyaControllerFactory.deploy();
+    const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
-    await controller.setToken(oyaToken.address);
-    await controller.setArbitrator(arbitratorAddress);
-    await controller.setRewardAmount(10);
+    await controller.connect(updater).setToken(oyaToken.address);
+    await controller.connect(updater).setArbitrator(arbitratorAddress);
+    await controller.connect(updater).setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),

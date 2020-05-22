@@ -16,10 +16,25 @@ contract OyaController {
   mapping (address => Order) orders;
 
   Token oyaToken;
+  address updater;
   address payable arbitrator;
   uint256 rewardAmount;
 
   event OrderCreated(address);
+
+  modifier onlyUpdater() {
+    require(
+        msg.sender == updater,
+        "Only buyer can call this."
+    );
+    _;
+  }
+
+  constructor(
+    address _updater
+  ) public {
+    updater = _updater;
+  }
 
   function createOrder(
     address payable _buyer,
@@ -50,15 +65,19 @@ contract OyaController {
 
 
   // upgrade functions -- will be controlled by Updater
-  function setToken(address tokenAddress) public {
+  function setToken(address tokenAddress) onlyUpdater public {
     oyaToken = Token(tokenAddress);
   }
 
-  function setArbitrator(address payable _arbitrator) public {
+  function setUpdater(address payable _updater) onlyUpdater public {
+    updater = _updater;
+  }
+
+  function setArbitrator(address payable _arbitrator) onlyUpdater public {
     arbitrator = _arbitrator;
   }
 
-  function setRewardAmount(uint256 _rewardAmount) public {
+  function setRewardAmount(uint256 _rewardAmount) onlyUpdater public {
     rewardAmount = _rewardAmount;
   }
 
