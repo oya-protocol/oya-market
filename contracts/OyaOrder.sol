@@ -129,7 +129,11 @@ contract OyaOrder is ChainlinkClient {
     state = State.Dispute;
   }
 
-  function settleDispute(address _user) public onlyArbitrator {
+  function settleDispute(address _user)
+    public
+    onlyArbitrator
+    inState(State.Dispute)
+  {
     require (
       _user == buyer || _user == seller,
       "Revert: can only send funds to buyer or seller"
