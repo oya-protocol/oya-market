@@ -47,6 +47,8 @@ describe("Controller", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -60,7 +62,6 @@ describe("Controller", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -128,6 +129,8 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -141,7 +144,6 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -221,6 +223,8 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -234,7 +238,6 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -310,6 +313,8 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -323,7 +328,6 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -399,6 +403,8 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -412,7 +418,6 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -492,6 +497,8 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -505,7 +512,6 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address
@@ -584,6 +590,8 @@ describe("Order", function() {
     const controller = await OyaControllerFactory.deploy();
     await controller.deployed();
     await controller.setToken(oyaToken.address);
+    await controller.setArbitrator(arbitratorAddress);
+    await controller.setRewardAmount(10);
 
     await oyaToken.connect(oya).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -597,7 +605,6 @@ describe("Order", function() {
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
-      arbitratorAddress,
       daiToken.address,
       100,
       linkToken.address

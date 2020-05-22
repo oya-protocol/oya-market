@@ -16,14 +16,14 @@ contract OyaController {
   mapping (address => Order) orders;
 
   Token oyaToken;
-  uint256 rewardAmount = 10;
+  address payable arbitrator;
+  uint256 rewardAmount;
 
   event OrderCreated(address);
 
   function createOrder(
     address payable _buyer,
     address payable _seller,
-    address payable _arbitrator,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
     address _link
@@ -35,7 +35,7 @@ contract OyaController {
     OyaOrder newOrder = new OyaOrder(
       _buyer,
       _seller,
-      _arbitrator,
+      arbitrator,
       _paymentToken,
       _paymentAmount,
       _link
@@ -45,13 +45,24 @@ contract OyaController {
 
     emit OrderCreated(address(newOrder));
 
-    orders[address(newOrder)] = Order(true, _seller, _buyer, _arbitrator);
+    orders[address(newOrder)] = Order(true, _seller, _buyer, arbitrator);
   }
 
+
+  // upgrade functions -- will be controlled by Updater
   function setToken(address tokenAddress) public {
     oyaToken = Token(tokenAddress);
   }
 
+  function setArbitrator(address payable _arbitrator) public {
+    arbitrator = _arbitrator;
+  }
+
+  function setRewardAmount(uint256 _rewardAmount) public {
+    rewardAmount = _rewardAmount;
+  }
+
+  // order management functions
   function reward(address recipient) public {
     require (orders[msg.sender].exists == true);
     oyaToken.mint(recipient, rewardAmount);
