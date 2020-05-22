@@ -56,6 +56,14 @@ contract OyaOrder is ChainlinkClient {
     _;
   }
 
+  modifier onlyArbitrator() {
+    require(
+        msg.sender == arbitrator,
+        "Only arbitrator can call this."
+    );
+    _;
+  }
+
   modifier inState(State _state) {
     require(
         state == _state,
@@ -119,6 +127,18 @@ contract OyaOrder is ChainlinkClient {
   {
     emit ReturnTrackingSet(_shippingProvider, _trackingNumber);
     state = State.Dispute;
+  }
+
+  function settleDispute(address _user) public onlyArbitrator {
+    require (
+      _user == buyer || _user == seller,
+      "Revert: can only send funds to buyer or seller"
+    );
+    if (_user == buyer) {
+      _refundBuyer();
+    } else if (_user == seller) {
+      _paySeller();
+    }
   }
 
   // Lock order before shipping
