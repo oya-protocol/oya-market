@@ -48,7 +48,7 @@ describe("Controller", function() {
     await controller.setToken(oyaToken.address);
 
     await oyaToken.connect(oya).grantRole(
-      ethers.utils.formatBytes32String("MINTER_ROLE"),
+      ethers.utils.id("MINTER_ROLE"),
       controller.address
     );
 
@@ -127,7 +127,7 @@ describe("Order", function() {
     await controller.setToken(oyaToken.address);
 
     await oyaToken.connect(oya).grantRole(
-      ethers.utils.formatBytes32String("MINTER_ROLE"),
+      ethers.utils.id("MINTER_ROLE"),
       controller.address
     );
 
@@ -218,7 +218,7 @@ describe("Order", function() {
     await controller.setToken(oyaToken.address);
 
     await oyaToken.connect(oya).grantRole(
-      ethers.utils.formatBytes32String("MINTER_ROLE"),
+      ethers.utils.id("MINTER_ROLE"),
       controller.address
     );
 

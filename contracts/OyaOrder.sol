@@ -11,11 +11,11 @@ import "@nomiclabs/buidler/console.sol";
 // * Accept constructor parameters from PurchaseFactory contract (DONE)
 // * Only require the payment for the item to be sent by buyer (DONE)
 // * Escrow the payments from buyer (DONE)
-// * Function for seller to set tracking details
-// * Function for buyer to reclaim funds if tracking details not set in timed
-// * Track shipment via Chainlink EasyPost integration
-// * Function for seller to claim funds if item was confirmed delivered and wait time has passed
-// * Add self-destruct function that gives gas refund and emits event
+// * Add self-destruct function that gives gas refund (DONE)
+// * Function for seller to set tracking details (DONE)
+// * Function for buyer to reclaim funds if tracking details not set in time (DONE)
+// * Track shipment via Chainlink EasyPost integration (DONE)
+// * Function for seller to claim funds if item was confirmed delivered and wait time has passed (DONE)
 
 contract OyaOrder is ChainlinkClient {
   address payable public seller;
@@ -24,7 +24,9 @@ contract OyaOrder is ChainlinkClient {
   uint256 public balance;
   bytes32 public shippingProvider;
   bytes32 public trackingNumber;
+  bytes32 public shippingStatus;
   OyaController public controller;
+  uint256 deliveryDate;
 
   enum State { Created, Locked, Delivered }
   // The state variable has a default value of the first member, `State.created`
@@ -80,11 +82,10 @@ contract OyaOrder is ChainlinkClient {
     controller = OyaController(msg.sender);
   }
 
-  /// Confirm that you (the buyer) received the item.
-  /// This will release the locked payment.
   function demandRefund()
     public
     onlyBuyer
+    inState(State.Created)
   {
     /* TODO: get return shipment tracking from buyer */
     /* TODO: check that return package was delivered? */
@@ -125,11 +126,39 @@ contract OyaOrder is ChainlinkClient {
     _paySeller();
   }
 
+  function requestStatus
+  (
+    address _oracle,
+    bytes32 _jobId,
+    uint256 _oraclePayment
+  )
+    public
+    onlySeller
+  {
+    Chainlink.Request memory req = buildChainlinkRequest(_jobId, address(this), this.fulfill.selector);
+    req.add("car", bytes32ToString(shippingProvider));
+    req.add("code", bytes32ToString(trackingNumber));
+    req.add("copyPath", "status");
+    sendChainlinkRequestTo(_oracle, req, _oraclePayment);
+  }
+
+  function fulfill(bytes32 _requestId, bytes32 _status)
+    public
+    recordChainlinkFulfillment(_requestId)
+  {
+    shippingStatus = _status;
+    if (shippingStatus == bytes32("Delivered")) {
+      state = State.Delivered;
+      deliveryDate = now;
+    }
+  }
+
   /// Seller claims payment after buyer deadline has passed.
   function confirmReceivedAutomatically()
     public
     inState(State.Delivered)
   {
+    require (now > deliveryDate + 15 days);
     _paySeller();
   }
 
@@ -157,5 +186,14 @@ contract OyaOrder is ChainlinkClient {
     internal
   {
     controller.reward(recipient);
+  }
+
+  // utility function
+  function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
+    bytes memory bytesArray = new bytes(32);
+    for (uint256 i; i < 32; i++) {
+      bytesArray[i] = _bytes32[i];
+    }
+    return string(bytesArray);
   }
 }
