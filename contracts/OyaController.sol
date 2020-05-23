@@ -43,7 +43,7 @@ contract OyaController {
     uint256 _paymentAmount,
     address _link
   )
-    public
+    external
     payable
   {
     require (msg.sender == _buyer);
@@ -65,29 +65,29 @@ contract OyaController {
 
 
   // upgrade functions -- will be controlled by Updater
-  function setToken(address tokenAddress) onlyUpdater public {
+  function setToken(address tokenAddress) onlyUpdater external {
     oyaToken = Token(tokenAddress);
   }
 
-  function setUpdater(address payable _updater) onlyUpdater public {
+  function setUpdater(address payable _updater) onlyUpdater external {
     updater = _updater;
   }
 
-  function setArbitrator(address payable _arbitrator) onlyUpdater public {
+  function setArbitrator(address payable _arbitrator) onlyUpdater external {
     arbitrator = _arbitrator;
   }
 
-  function setRewardAmount(uint256 _rewardAmount) onlyUpdater public {
+  function setRewardAmount(uint256 _rewardAmount) onlyUpdater external {
     rewardAmount = _rewardAmount;
   }
 
   // order management functions
-  function reward(address recipient) public {
+  function reward(address recipient) external {
     require (orders[msg.sender].exists == true);
     oyaToken.mint(recipient, rewardAmount);
   }
 
-  function clearOrder() public {
+  function clearOrder() external {
     require (orders[msg.sender].exists == true);
     delete(orders[msg.sender]);
   }

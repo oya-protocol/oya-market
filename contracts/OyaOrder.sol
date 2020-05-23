@@ -102,7 +102,7 @@ contract OyaOrder is ChainlinkClient {
   }
 
   function cancelOrder()
-    public
+    external
     inState(State.Created)
   {
     require(msg.sender == buyer || msg.sender == seller);
@@ -111,7 +111,7 @@ contract OyaOrder is ChainlinkClient {
 
   // Dispute cases that require an arbitrator
   function demandRefund()
-    public
+    external
     onlyBuyer
     inState(State.Locked)
   {
@@ -122,7 +122,7 @@ contract OyaOrder is ChainlinkClient {
     bytes32 _shippingProvider,
     bytes32 _trackingNumber
   )
-    public
+    external
     onlyBuyer
   {
     emit ReturnTrackingSet(_shippingProvider, _trackingNumber);
@@ -130,7 +130,7 @@ contract OyaOrder is ChainlinkClient {
   }
 
   function settleDispute(address _user)
-    public
+    external
     onlyArbitrator
     inState(State.Dispute)
   {
@@ -155,7 +155,7 @@ contract OyaOrder is ChainlinkClient {
     bytes32 _shippingProvider,
     bytes32 _trackingNumber
   )
-    public
+    external
     onlySeller
   {
     shippingProvider = _shippingProvider;
@@ -176,7 +176,7 @@ contract OyaOrder is ChainlinkClient {
   /// Confirm that you (the buyer) received and accept the item.
   /// This will unlock the payment.
   function acceptItem()
-    public
+    external
     onlyBuyer
   {
     _reward(buyer);
@@ -189,7 +189,7 @@ contract OyaOrder is ChainlinkClient {
     bytes32 _jobId,
     uint256 _oraclePayment
   )
-    public
+    external
     onlySeller
   {
     Chainlink.Request memory req = buildChainlinkRequest(_jobId, address(this), this.fulfill.selector);
@@ -200,7 +200,7 @@ contract OyaOrder is ChainlinkClient {
   }
 
   function fulfill(bytes32 _requestId, bytes32 _status)
-    public
+    external
     recordChainlinkFulfillment(_requestId)
   {
     shippingStatus = _status;
@@ -212,7 +212,7 @@ contract OyaOrder is ChainlinkClient {
 
   /// Seller claims payment after buyer deadline has passed.
   function confirmReceivedAutomatically()
-    public
+    external
     inState(State.Delivered)
   {
     require (now > deliveryDate + 15 days);
@@ -246,7 +246,7 @@ contract OyaOrder is ChainlinkClient {
   }
 
   // utility function
-  function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
+  function bytes32ToString(bytes32 _bytes32) internal pure returns (string memory) {
     bytes memory bytesArray = new bytes(32);
     for (uint256 i; i < 32; i++) {
       bytesArray[i] = _bytes32[i];
