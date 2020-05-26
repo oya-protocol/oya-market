@@ -5,23 +5,31 @@
            frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 </div>
 
-<h1 id="header">Oya</h1>
+<div id="header">
+  <img src="logo.png" />
+  <h1>Oya</h1>
+</div>
 
 <style>
-body {
-  background-color: black;
-  margin: 0;
-}
 #header {
+  margin-top: calc(50vh - 100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#header img {
+  height: 95px;
+  margin-right: 22px;
+}
+#header h1 {
   font-family: 'Lato', sans-serif;
   font-weight: 900;
   font-size: 95px;
   line-height: 100px;
   text-align: center;
   text-shadow: 8px 4px 10px rgba(0, 0, 0, 0.8);
-  /* box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.5); */
   color: white;
-  margin-top: calc(50vh - 100px);
+  margin: 0;
 }
 .vimeo-wrapper {
    position: fixed;
@@ -32,6 +40,7 @@ body {
    z-index: -1;
    pointer-events: none;
    overflow: hidden;
+   background-color: black;
 }
 .vimeo-wrapper iframe {
    width: 100vw;
