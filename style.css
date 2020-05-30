@@ -140,4 +140,5 @@ body {
 }
 #supercell {
   min-width: 50vw;
+  max-width: 1500px;
 }
