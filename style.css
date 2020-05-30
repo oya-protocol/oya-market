@@ -71,5 +71,17 @@ body {
   transform: translate(-50%, -50%);
 }
 .announcement {
-
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: 36px;
+  background-color: #F5EAE9;
+  display: block;
+}
+.announcement p {
+  color: black;
+  text-align: center;
+  margin-top: 8px;
 }
