@@ -87,6 +87,11 @@ body {
 }
 #landing {
   margin: 0;
+  background: url('denise-unhappy.jpg') no-repeat top right -300px fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 #landing img {
   width: 60%;
