@@ -85,3 +85,7 @@ body {
   text-align: center;
   margin-top: 8px;
 }
+#landing img {
+  width: 60%;
+  float: right;
+}
