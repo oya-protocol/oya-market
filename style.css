@@ -86,7 +86,7 @@ body {
   margin-top: 8px;
 }
 #landing {
-  background: none;
+  background: linear-gradient(194.23deg, #6B5D6F 58.06%, #EFE2E1 90.07%);
 }
 #supercell {
   visibility: hidden;
