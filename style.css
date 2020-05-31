@@ -86,7 +86,12 @@ body {
   margin-top: 8px;
 }
 #landing {
-  background: linear-gradient(194.23deg, #6B5D6F 58.06%, #EFE2E1 90.07%);
+  background: linear-gradient(194.23deg, #6B5D6F 58.06%, #EFE2E1 90.07%) no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  overflow: hidden;
 }
 #supercell {
   visibility: hidden;
