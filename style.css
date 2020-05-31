@@ -86,14 +86,27 @@ body {
   margin-top: 8px;
 }
 #landing {
-  margin: 0;
-  background: url('denise-unhappy.jpg') no-repeat top right -20vw fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+  background: none;
 }
-@media (max-aspect-ratio: 7/5) {
+#supercell {
+  visibility: hidden;
+}
+@media (min-device-width: 813px) {
+  #supercell {
+    visibility: visible;
+    min-width: 50vw;
+    max-width: 1500px;
+  }
+  #landing {
+    margin: 0;
+    background: url('denise-unhappy.jpg') no-repeat top right -20vw fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+}
+@media (min-device-width: 813px) and (max-aspect-ratio: 7/5) {
   #landing {
     background: url('denise-unhappy.jpg') no-repeat top right -40vw fixed;
     -webkit-background-size: cover;
@@ -102,7 +115,7 @@ body {
     background-size: cover;
   }
 }
-@media (max-aspect-ratio: 6/5) {
+@media (min-device-width: 813px) and (max-aspect-ratio: 6/5) {
   #landing {
     background: url('denise-unhappy.jpg') no-repeat top right -50vw fixed;
     -webkit-background-size: cover;
@@ -111,7 +124,7 @@ body {
     background-size: cover;
   }
 }
-@media (max-aspect-ratio: 1/1) {
+@media (min-device-width: 813px) and (max-aspect-ratio: 1/1) {
   #landing {
     background: url('denise-unhappy.jpg') no-repeat top right -60vw fixed;
     -webkit-background-size: cover;
@@ -120,7 +133,7 @@ body {
     background-size: cover;
   }
 }
-@media (min-aspect-ratio: 5/6) and (max-aspect-ratio: 1/1) {
+@media  (min-device-width: 813px) and (min-aspect-ratio: 5/6) and (max-aspect-ratio: 1/1) {
   #landing {
     background: url('denise-unhappy.jpg') no-repeat top right -70vw fixed;
     -webkit-background-size: cover;
@@ -129,7 +142,7 @@ body {
     background-size: cover;
   }
 }
-@media (min-aspect-ratio: 5/7) and (max-aspect-ratio: 5/6) {
+@media (min-device-width: 813px) and (min-aspect-ratio: 5/7) and (max-aspect-ratio: 5/6) {
   #landing {
     background: url('denise-unhappy.jpg') no-repeat top right -90vw fixed;
     -webkit-background-size: cover;
@@ -137,19 +150,5 @@ body {
     -o-background-size: cover;
     background-size: cover;
     overflow: hidden;
-  }
-}
-#supercell {
-  min-width: 50vw;
-  max-width: 1500px;
-}
-@media only screen
-  and (max-device-width: 812px)
-  and (-webkit-min-device-pixel-ratio: 3) {
-  #landing {
-    background: none;
-  }
-  #supercell {
-    display: none;
   }
 }
