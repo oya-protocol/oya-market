@@ -266,5 +266,6 @@ body {
     width: 600px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 64px;
   }
 }
