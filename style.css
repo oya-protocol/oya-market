@@ -92,6 +92,7 @@ body {
   -o-background-size: cover;
   background-size: cover;
   overflow: hidden;
+  max-width: 100vw;
 }
 #supercell {
   visibility: hidden;
