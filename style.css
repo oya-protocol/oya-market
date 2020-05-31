@@ -148,6 +148,11 @@ body {
   and (-webkit-min-device-pixel-ratio: 3) {
   #landing {
     background: linear-gradient(194.23deg, #6B5D6F 58.06%, #EFE2E1 90.07%);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    overflow: hidden;
   }
   #supercell {
     display: none;
