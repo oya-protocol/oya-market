@@ -106,6 +106,44 @@ body {
 #supercell {
   display: none;
 }
+#supercell-text {
+  position: absolute;
+  top: 0;
+  left: 48;
+  z-index: 100;
+  max-width: 1500px;
+  width: 34vw;
+  font-weight: 100;
+  font-size: 18px;
+  line-height: 1.5;
+}
+#supercell-text h1 {
+  font-weight: 900;
+  font-size: 48px;
+}
+#supercell-text strong {
+  font-size: 20px;
+}
+#supercell-text p {
+  margin-block-end: 1.5em;
+}
+#supercell-text #button {
+  display: block;
+  background: radial-gradient(109.55% 109.55% at 50% 0%, #C4C4C4 64.58%, #F9F01A 100%);
+  background-blend-mode: color-dodge;
+  border: 1px solid #304659;
+  box-sizing: border-box;
+  border-radius: 131px;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  font-size: 28px;
+  font-weight: 900;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  width: 300px;
+  margin-top: 48px;
+}
 @media (min-device-width: 813px) {
   #supercell {
     display: inline;
