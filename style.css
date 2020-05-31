@@ -243,7 +243,7 @@ body {
 }
 @media (min-width: 1300px) and (min-aspect-ratio: 7/5) {
 #supercell-text h1 {
-  padding-right: 22vw;
+  padding-right: 30vw;
   font-size: 48px;
 }
 
