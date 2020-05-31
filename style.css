@@ -247,6 +247,7 @@ body {
     padding-left: 48px;
     padding-right: 48px;
     font-size: 28px;
+    clip-path: none;
   }
   #supercell-text h1 {
     padding-right: 0;
@@ -261,7 +262,7 @@ body {
   }
   #supercell-text #button {
     font-size: 48px;
-    width: 300px;
+    width: 500px;
     margin-left: auto;
     margin-right: auto;
   }
