@@ -143,3 +143,13 @@ body {
   min-width: 50vw;
   max-width: 1500px;
 }
+@media only screen
+  and (max-device-width: 812px)
+  and (-webkit-min-device-pixel-ratio: 3) {
+  #landing {
+    background: linear-gradient(194.23deg, #6B5D6F 58.06%, #EFE2E1 90.07%);
+  }
+  #supercell {
+    display: none;
+  }
+}
