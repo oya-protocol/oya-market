@@ -241,6 +241,13 @@ body {
     width: 300px;
   }
 }
+@media (min-width: 1300px) and (min-aspect-ratio: 7/5) {
+#supercell-text h1 {
+  padding-right: 22vw;
+  font-size: 48px;
+}
+
+}
 @media (max-device-width: 812px) {
   #supercell-text {
     max-width: 100vw;
