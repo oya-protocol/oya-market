@@ -223,9 +223,6 @@ body {
   }
 }
 @media (min-device-width: 813px) and (min-width: 1300px) {
-  #supercell {
-    min-width: 75vw;
-  }
   #supercell-text {
     font-size: 18px;
   }
