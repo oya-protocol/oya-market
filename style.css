@@ -223,6 +223,9 @@ body {
   }
 }
 @media (min-width: 1300px) {
+  #supercell {
+    min-width: 70vw;
+  }
   #supercell-text {
     font-size: 18px;
   }
