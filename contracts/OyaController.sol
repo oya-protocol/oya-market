@@ -3,8 +3,9 @@ pragma solidity >=0.6.0 <0.7.0;
 import './OyaOrder.sol';
 import './Token.sol';
 import "@nomiclabs/buidler/console.sol";
+import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
-contract OyaController {
+contract OyaController is BaseRelayRecipient {
 
   struct Order {
     bool exists;
@@ -24,7 +25,7 @@ contract OyaController {
 
   modifier onlyUpdater() {
     require(
-        msg.sender == updater,
+        _msgSender() == updater,
         "Only buyer can call this."
     );
     _;
@@ -45,7 +46,7 @@ contract OyaController {
     external
     payable
   {
-    require (msg.sender == _buyer);
+    require (_msgSender() == _buyer);
     OyaOrder newOrder = new OyaOrder(
       _buyer,
       _seller,
@@ -54,13 +55,12 @@ contract OyaController {
       _paymentAmount
     );
 
-    _paymentToken.transferFrom(msg.sender, address(newOrder), _paymentAmount);
+    _paymentToken.transferFrom(_msgSender(), address(newOrder), _paymentAmount);
 
     emit OrderCreated(address(newOrder));
 
     orders[address(newOrder)] = Order(true, _seller, _buyer, arbitrator);
   }
-
 
   // upgrade functions -- will be controlled by Updater
   function setToken(address tokenAddress) onlyUpdater external {
@@ -81,12 +81,12 @@ contract OyaController {
 
   // order management functions
   function reward(address recipient) external {
-    require (orders[msg.sender].exists == true);
+    require (orders[_msgSender()].exists == true);
     oyaToken.mint(recipient, rewardAmount);
   }
 
   function clearOrder() external {
-    require (orders[msg.sender].exists == true);
-    delete(orders[msg.sender]);
+    require (orders[_msgSender()].exists == true);
+    delete(orders[_msgSender()]);
   }
 }

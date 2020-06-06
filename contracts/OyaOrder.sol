@@ -3,20 +3,9 @@ pragma solidity >=0.6.0 <0.7.0;
 import './OyaController.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@nomiclabs/buidler/console.sol";
+import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
-// TODO:
-// * Remove unused boilerplate (DONE)
-// * Payments in ERC20 tokens (DONE)
-// * Accept constructor parameters from PurchaseFactory contract (DONE)
-// * Only require the payment for the item to be sent by buyer (DONE)
-// * Escrow the payments from buyer (DONE)
-// * Add self-destruct function that gives gas refund (DONE)
-// * Function for seller to set tracking details (DONE)
-// * Function for buyer to reclaim funds if tracking details not set in time (DONE)
-// * Track shipment via Chainlink EasyPost integration (DONE)
-// * Function for seller to claim funds if item was confirmed delivered and wait time has passed (DONE)
-
-contract OyaOrder {
+contract OyaOrder is BaseRelayRecipient {
   address payable public seller;
   address payable public buyer;
   address payable public arbitrator;
@@ -30,7 +19,7 @@ contract OyaOrder {
 
   modifier onlyBuyer() {
     require(
-        msg.sender == buyer,
+        _msgSender() == buyer,
         "Only buyer can call this."
     );
     _;
@@ -38,7 +27,7 @@ contract OyaOrder {
 
   modifier onlySeller() {
     require(
-        msg.sender == seller,
+        _msgSender() == seller,
         "Only seller can call this."
     );
     _;
@@ -46,7 +35,7 @@ contract OyaOrder {
 
   modifier onlyArbitrator() {
     require(
-        msg.sender == arbitrator,
+        _msgSender() == arbitrator,
         "Only arbitrator can call this."
     );
     _;
@@ -75,14 +64,14 @@ contract OyaOrder {
     arbitrator = _arbitrator;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
-    controller = OyaController(msg.sender);
+    controller = OyaController(_msgSender());
   }
 
   function cancelOrder()
     external
     inState(State.Created)
   {
-    require(msg.sender == buyer || msg.sender == seller);
+    require(_msgSender() == buyer || _msgSender() == seller);
     _refundBuyer();
   }
 
@@ -116,8 +105,7 @@ contract OyaOrder {
     state = State.Locked;
   }
 
-  /// Confirm that you (the buyer) received and accept the item.
-  /// This will unlock the payment.
+  // Confirm the item was received and accepted, paying the seller
   function acceptItem()
     external
     onlyBuyer
@@ -126,7 +114,7 @@ contract OyaOrder {
     _paySeller();
   }
 
-  /// This internal function pays the seller.
+  // This internal function pays the seller
   function _paySeller()
     internal
   {
