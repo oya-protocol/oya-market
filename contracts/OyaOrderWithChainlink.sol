@@ -1,7 +1,8 @@
 pragma solidity >=0.6.0 <0.7.0;
 
-import './OyaController.sol';
+import './OyaControllerWithChainlink.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 import "@nomiclabs/buidler/console.sol";
 
 // TODO:
@@ -16,15 +17,26 @@ import "@nomiclabs/buidler/console.sol";
 // * Track shipment via Chainlink EasyPost integration (DONE)
 // * Function for seller to claim funds if item was confirmed delivered and wait time has passed (DONE)
 
-contract OyaOrder {
+contract OyaOrderWithChainlink is ChainlinkClient {
   address payable public seller;
   address payable public buyer;
   address payable public arbitrator;
   IERC20 public paymentToken;
   uint256 public balance;
-  OyaController public controller;
+  bytes32 public shippingProvider;
+  bytes32 public trackingNumber;
+  bytes32 public shippingStatus;
+  OyaControllerWithChainlink public controller;
+  uint256 deliveryDate;
 
-  enum State { Created, Locked, Dispute }
+
+  struct Tracking {
+    bool exists;
+    address seller;
+    address buyer;
+  }
+
+  enum State { Created, Locked, Delivered, Dispute }
   // The state variable has a default value of the first member, `State.created`
   State public state;
 
@@ -61,6 +73,8 @@ contract OyaOrder {
   }
 
   event BuyerRefunded();
+  event TrackingSet(bytes32, bytes32);
+  event ReturnTrackingSet(bytes32, bytes32);
   event SellerPaid();
 
   constructor(
@@ -68,14 +82,23 @@ contract OyaOrder {
     address payable _seller,
     address payable _arbitrator,
     IERC20 _paymentToken,
-    uint256 _paymentAmount
+    uint256 _paymentAmount,
+    address _link
   ) public payable {
+    // Set the address for the LINK token for the network.
+    if(_link == address(0)) {
+      // Useful for deploying to public networks.
+      setPublicChainlinkToken();
+    } else {
+      // Useful if you're deploying to a local network.
+      setChainlinkToken(_link);
+    }
     buyer = _buyer;
     seller = _seller;
     arbitrator = _arbitrator;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
-    controller = OyaController(msg.sender);
+    controller = OyaControllerWithChainlink(msg.sender);
   }
 
   function cancelOrder()
@@ -92,6 +115,17 @@ contract OyaOrder {
     onlyBuyer
     inState(State.Locked)
   {
+    state = State.Dispute;
+  }
+
+  function returnItem(
+    bytes32 _shippingProvider,
+    bytes32 _trackingNumber
+  )
+    external
+    onlyBuyer
+  {
+    emit ReturnTrackingSet(_shippingProvider, _trackingNumber);
     state = State.Dispute;
   }
 
@@ -116,6 +150,29 @@ contract OyaOrder {
     state = State.Locked;
   }
 
+  /// Set tracking information for the delivery as the seller.
+  function setTracking(
+    bytes32 _shippingProvider,
+    bytes32 _trackingNumber
+  )
+    external
+    onlySeller
+  {
+    shippingProvider = _shippingProvider;
+    trackingNumber = _trackingNumber;
+    emit TrackingSet(shippingProvider, trackingNumber);
+    state = State.Locked;
+  }
+
+  function getTracking()
+    external
+    view
+    inState(State.Locked)
+    returns (bytes32, bytes32)
+  {
+    return (shippingProvider, trackingNumber);
+  }
+
   /// Confirm that you (the buyer) received and accept the item.
   /// This will unlock the payment.
   function acceptItem()
@@ -123,6 +180,42 @@ contract OyaOrder {
     onlyBuyer
   {
     _reward(buyer);
+    _paySeller();
+  }
+
+  function requestStatus
+  (
+    address _oracle,
+    bytes32 _jobId,
+    uint256 _oraclePayment
+  )
+    external
+    onlySeller
+  {
+    Chainlink.Request memory req = buildChainlinkRequest(_jobId, address(this), this.fulfill.selector);
+    req.add("car", bytes32ToString(shippingProvider));
+    req.add("code", bytes32ToString(trackingNumber));
+    req.add("copyPath", "status");
+    sendChainlinkRequestTo(_oracle, req, _oraclePayment);
+  }
+
+  function fulfill(bytes32 _requestId, bytes32 _status)
+    external
+    recordChainlinkFulfillment(_requestId)
+  {
+    shippingStatus = _status;
+    if (shippingStatus == bytes32("Delivered")) {
+      state = State.Delivered;
+      deliveryDate = now;
+    }
+  }
+
+  /// Seller claims payment after buyer deadline has passed.
+  function confirmReceivedAutomatically()
+    external
+    inState(State.Delivered)
+  {
+    require (now > deliveryDate + 15 days);
     _paySeller();
   }
 
@@ -150,5 +243,14 @@ contract OyaOrder {
     internal
   {
     controller.reward(recipient);
+  }
+
+  // utility function
+  function bytes32ToString(bytes32 _bytes32) internal pure returns (string memory) {
+    bytes memory bytesArray = new bytes(32);
+    for (uint256 i; i < 32; i++) {
+      bytesArray[i] = _bytes32[i];
+    }
+    return string(bytesArray);
   }
 }

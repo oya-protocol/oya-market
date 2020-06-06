@@ -1,10 +1,10 @@
 pragma solidity >=0.6.0 <0.7.0;
 
-import './OyaOrder.sol';
+import './OyaOrderWithChainlink.sol';
 import './Token.sol';
 import "@nomiclabs/buidler/console.sol";
 
-contract OyaController {
+contract OyaControllerWithChainlink {
 
   struct Order {
     bool exists;
@@ -40,18 +40,20 @@ contract OyaController {
     address payable _buyer,
     address payable _seller,
     IERC20 _paymentToken,
-    uint256 _paymentAmount
+    uint256 _paymentAmount,
+    address _link
   )
     external
     payable
   {
     require (msg.sender == _buyer);
-    OyaOrder newOrder = new OyaOrder(
+    OyaOrderWithChainlink newOrder = new OyaOrderWithChainlink(
       _buyer,
       _seller,
       arbitrator,
       _paymentToken,
-      _paymentAmount
+      _paymentAmount,
+      _link
     );
 
     _paymentToken.transferFrom(msg.sender, address(newOrder), _paymentAmount);
