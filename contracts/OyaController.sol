@@ -80,14 +80,13 @@ contract OyaController is BaseRelayRecipient {
   }
 
   // order management functions
-  // msg.sender is the order contract address
   function reward(address recipient) external {
-    require (orders[msg.sender].exists == true);
+    require (orders[_msgSender()].exists == true);
     oyaToken.mint(recipient, rewardAmount);
   }
 
   function clearOrder() external {
-    require (orders[msg.sender].exists == true);
-    delete(orders[msg.sender]);
+    require (orders[_msgSender()].exists == true);
+    delete(orders[_msgSender()]);
   }
 }
