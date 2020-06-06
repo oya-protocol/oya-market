@@ -51,6 +51,7 @@ contract OyaController is BaseRelayRecipient {
       _buyer,
       _seller,
       arbitrator,
+      trustedForwarder,
       _paymentToken,
       _paymentAmount
     );
@@ -77,6 +78,10 @@ contract OyaController is BaseRelayRecipient {
 
   function setRewardAmount(uint256 _rewardAmount) onlyUpdater external {
     rewardAmount = _rewardAmount;
+  }
+
+  function setTrustedForwarder(address _trustedForwarder) onlyUpdater public {
+    trustedForwarder = _trustedForwarder;
   }
 
   // order management functions

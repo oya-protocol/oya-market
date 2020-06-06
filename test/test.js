@@ -14,12 +14,13 @@ const explanation = chalk.cyanBright;
 describe("Controller", function() {
   this.timeout(100000);
   it("Controller should be able to deploy order contract", async function() {
-    const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     updaterAddress = await updater.getAddress();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
+    trustedForwarderAddress = await trustedForwarder.getAddress();
 
     log(explanation('\nSetting up some addresses from ethers.getSigners...'));
     log(chalk`
@@ -81,6 +82,7 @@ describe("Controller", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
+    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
 
     log(explanation("\nThe " + chalk.whiteBright("Updater") + " sets the " + chalk.magentaBright("reward amount") + ", the " + chalk.whiteBright("Oya Token") + " contract address, and default " + chalk.redBright("arbitrator ") + "address in the " + chalk.whiteBright("Controller") + "."));
     log(chalk`
@@ -145,12 +147,13 @@ describe("Order", function() {
   it("Buyer should be able to cancel order", async function() {
     log(explanation("\nIf the " + chalk.yellowBright("seller") + " has not accepted the order yet, the " + chalk.greenBright("buyer") + " can cancel and automatically get their money back.\n"));
 
-    const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
+    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -182,6 +185,7 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
+    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -239,12 +243,13 @@ describe("Order", function() {
   it("Seller should be able to cancel order", async function() {
     log(explanation("\nIf the " + chalk.yellowBright("seller") + " realizes they can not fulfill the order, they can cancel it and the " + chalk.greenBright("buyer") + " will automatically get their money back.\n"));
 
-    const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
+    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -276,6 +281,7 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
+    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -333,12 +339,13 @@ describe("Order", function() {
   it("Seller should be able to get paid if buyer accepts item", async function() {
     log(explanation("\nIn most cases, the " + chalk.greenBright("buyer") + " will mark an item as accepted, to earn " + chalk.whiteBright("Oya Token") + " rewards. This also automatically pays the " + chalk.yellowBright("seller") + ".\n"));
 
-    const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
+    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -370,6 +377,7 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
+    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -437,12 +445,13 @@ describe("Order", function() {
   it("Buyer should be able to get paid if arbitrator rules in their favor", async function() {
     log(explanation("\nIf the " + chalk.greenBright("buyer") + " raises a dispute, the " + chalk.redBright("arbitrator") + " reviews the case and chooses to pay either the " + chalk.greenBright("buyer") + " or the " + chalk.yellowBright("seller") + ".\n"));
 
-    const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
+    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -474,6 +483,7 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
+    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -537,12 +547,13 @@ describe("Order", function() {
   });
 
   it("Seller should be able to get paid if arbitrator rules in their favor", async function() {
-    const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+    const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
+    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -574,6 +585,7 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
+    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -650,7 +662,7 @@ describe("Order", function() {
 // it("Seller should be able to set tracking information", async function() {
 //   log(explanation("\nIf the order looks good, the " + chalk.yellowBright("seller") + " can accept the order to lock it and set tracking information."));
 //
-//   const [updater, buyer, seller, arbitrator] = await ethers.getSigners();
+//   const [updater, buyer, seller, arbitrator, trustedForwarder] = await ethers.getSigners();
 //   const provider = ethers.getDefaultProvider();
 //   buyerAddress = await buyer.getAddress();
 //   sellerAddress = await seller.getAddress();

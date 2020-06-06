@@ -56,12 +56,14 @@ contract OyaOrder is BaseRelayRecipient {
     address payable _buyer,
     address payable _seller,
     address payable _arbitrator,
+    address _trustedForwarder,
     IERC20 _paymentToken,
     uint256 _paymentAmount
   ) public payable {
     buyer = _buyer;
     seller = _seller;
     arbitrator = _arbitrator;
+    trustedForwarder = _trustedForwarder;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
     controller = OyaController(_msgSender());
