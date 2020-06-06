@@ -26,7 +26,7 @@ contract OyaController is BaseRelayRecipient {
   modifier onlyUpdater() {
     require(
         _msgSender() == updater,
-        "Only buyer can call this."
+        "Only updater can call this."
     );
     _;
   }
@@ -80,13 +80,14 @@ contract OyaController is BaseRelayRecipient {
   }
 
   // order management functions
+  // msg.sender is the order contract address
   function reward(address recipient) external {
-    require (orders[_msgSender()].exists == true);
+    require (orders[msg.sender].exists == true);
     oyaToken.mint(recipient, rewardAmount);
   }
 
   function clearOrder() external {
-    require (orders[_msgSender()].exists == true);
-    delete(orders[_msgSender()]);
+    require (orders[msg.sender].exists == true);
+    delete(orders[msg.sender]);
   }
 }

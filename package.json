@@ -30,6 +30,6 @@
   "dependencies": {
     "@chainlink/contracts": "0.0.3",
     "@openzeppelin/contracts": "3.0.1",
-    "@opengsn/gsn": "0.10.0"
+    "@opengsn/gsn": "0.9.0"
   }
 }
