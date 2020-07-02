@@ -615,23 +615,24 @@ async function main() {
       "type": "function"
     }
   ];
-  const address = "0xe311616F49594a15476B23CE016e06c4b2a5Bc4b";
-  const provider = ethers.getDefaultProvider('ropsten');
-  const wallet = new ethers.Wallet(process.env.ROPSTEN_PRIVATE_KEY, provider)
+  const address = "0x55EF32eCAf08A5F584bdd35Be8901B89812ab922";
+  // const provider = ethers.getDefaultProvider('ropsten');
+  const provider = ethers.getDefaultProvider();
+  // const wallet = new ethers.Wallet(process.env.ROPSTEN_PRIVATE_KEY, provider);
+  const wallet = new ethers.Wallet(process.env.MAINNET_PRIVATE_KEY, provider);
   console.log("Wallet address:", wallet.address);
 
   const oyaToken = new ethers.Contract(address, abi, provider);
   var paused = await oyaToken.paused();
   console.log("Token paused:", paused);
 
-  // mint 999.999999999999999999 Oya tokens to three wallet addresses
+  // mint tokens to address
+  const mintTokenAmount = ethers.utils.bigNumberify("999999999999999999999");
+  const mintToAddress = "";
   await oyaToken.connect(wallet).mint(
-    wallet.address,
-    ethers.utils.bigNumberify("999000000000000000000")
+    mintToAddress,
+    mintTokenAmount
   );
-  var balance = await oyaToken.balanceOf(wallet.address);
-  balance = balance.toNumber();
-  console.log("Wallet balance:", balance);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
