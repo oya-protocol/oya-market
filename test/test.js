@@ -418,7 +418,7 @@ describe("Order", function() {
 
     const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
 
-    await order.connect(buyer).acceptItem();
+    await order.connect(buyer).acceptDelivery();
 
     let sellerBalance = await daiToken.balanceOf(sellerAddress);
     expect(sellerBalance).to.equal(100);

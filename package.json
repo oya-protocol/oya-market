@@ -25,12 +25,14 @@
     "chalk": "^4.0.0",
     "ethereum-waffle": "^2.4.1",
     "ethers": "^4.0.47",
-    "husky": "^4.2.5"
+    "husky": "^4.2.5",
+    "lodash": ">=4.17.19"
   },
   "dependencies": {
     "@chainlink/contracts": "0.0.3",
-    "@opengsn/gsn": "0.9.0",
+    "@opengsn/gsn": "^0.10.0",
     "@openzeppelin/contracts": "3.0.2",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "lodash": ">=4.17.19"
   }
 }

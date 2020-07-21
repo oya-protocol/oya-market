@@ -41,7 +41,8 @@ contract OyaController is BaseRelayRecipient {
     address payable _buyer,
     address payable _seller,
     IERC20 _paymentToken,
-    uint256 _paymentAmount
+    uint256 _paymentAmount,
+    bytes32[] calldata _productHashes
   )
     external
     payable
@@ -53,7 +54,8 @@ contract OyaController is BaseRelayRecipient {
       arbitrator,
       trustedForwarder,
       _paymentToken,
-      _paymentAmount
+      _paymentAmount,
+      _productHashes
     );
 
     _paymentToken.transferFrom(_msgSender(), address(newOrder), _paymentAmount);
@@ -94,4 +96,10 @@ contract OyaController is BaseRelayRecipient {
     require (orders[_msgSender()].exists == true);
     delete(orders[_msgSender()]);
   }
+
+  // OpenGSN function
+  function versionRecipient() external virtual view
+  	override returns (string memory) {
+  		return "1.0";
+    }
 }

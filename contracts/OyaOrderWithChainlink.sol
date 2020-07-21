@@ -175,7 +175,7 @@ contract OyaOrderWithChainlink is ChainlinkClient {
 
   /// Confirm that you (the buyer) received and accept the item.
   /// This will unlock the payment.
-  function acceptItem()
+  function acceptDelivery()
     external
     onlyBuyer
   {

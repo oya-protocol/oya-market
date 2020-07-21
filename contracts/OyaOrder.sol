@@ -11,6 +11,7 @@ contract OyaOrder is BaseRelayRecipient {
   address payable public arbitrator;
   IERC20 public paymentToken;
   uint256 public balance;
+  bytes32[] public productHashes;
   OyaController public controller;
 
   enum State { Created, Locked, Dispute }
@@ -58,7 +59,8 @@ contract OyaOrder is BaseRelayRecipient {
     address payable _arbitrator,
     address _trustedForwarder,
     IERC20 _paymentToken,
-    uint256 _paymentAmount
+    uint256 _paymentAmount,
+    bytes32[] memory _productHashes
   ) public payable {
     buyer = _buyer;
     seller = _seller;
@@ -66,6 +68,7 @@ contract OyaOrder is BaseRelayRecipient {
     trustedForwarder = _trustedForwarder;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
+    productHashes = _productHashes;
     controller = OyaController(_msgSender());
   }
 
@@ -108,7 +111,7 @@ contract OyaOrder is BaseRelayRecipient {
   }
 
   // Confirm the item was received and accepted, paying the seller
-  function acceptItem()
+  function acceptDelivery()
     external
     onlyBuyer
   {
@@ -141,4 +144,10 @@ contract OyaOrder is BaseRelayRecipient {
   {
     controller.reward(recipient);
   }
+
+  // OpenGSN function
+  function versionRecipient() external virtual view
+  	override returns (string memory) {
+  		return "1.0";
+    }
 }
