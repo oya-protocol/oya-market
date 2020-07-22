@@ -109,12 +109,17 @@ describe("Controller", function() {
       {magentaBright uint256 paymentAmount}: ${100}
     `);
 
+    let productHashes = [
+      'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t',
+      'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA'
+    ];
 
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       daiToken.address,
-      100
+      100,
+      productHashes
     );
 
     controller.on("OrderCreated", (newOrder, event) => {
@@ -196,11 +201,17 @@ describe("Order", function() {
 
     let orderAddress;
 
+    let productHashes = [
+      'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t',
+      'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA'
+    ];
+
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       daiToken.address,
-      100
+      100,
+      productHashes
     );
 
     controller.on("OrderCreated", (newOrder, event) => {
@@ -292,11 +303,17 @@ describe("Order", function() {
 
     let orderAddress;
 
+    let productHashes = [
+      'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t',
+      'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA'
+    ];
+
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       daiToken.address,
-      100
+      100,
+      productHashes
     );
 
     controller.on("OrderCreated", (newOrder, event) => {
@@ -388,11 +405,17 @@ describe("Order", function() {
 
     let orderAddress;
 
+    let productHashes = [
+      'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t',
+      'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA'
+    ];
+
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       daiToken.address,
-      100
+      100,
+      productHashes
     );
 
     controller.on("OrderCreated", (newOrder, event) => {
@@ -494,11 +517,17 @@ describe("Order", function() {
 
     let orderAddress;
 
+    let productHashes = [
+      'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t',
+      'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA'
+    ];
+
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       daiToken.address,
-      100
+      100,
+      productHashes
     );
 
     controller.on("OrderCreated", (newOrder, event) => {
@@ -596,11 +625,17 @@ describe("Order", function() {
 
     let orderAddress;
 
+    let productHashes = [
+      'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t',
+      'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA'
+    ];
+
     let tx = await controller.connect(buyer).createOrder(
       buyerAddress,
       sellerAddress,
       daiToken.address,
-      100
+      100,
+      productHashes
     );
 
     controller.on("OrderCreated", (newOrder, event) => {

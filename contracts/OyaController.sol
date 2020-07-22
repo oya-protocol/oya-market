@@ -1,4 +1,5 @@
 pragma solidity >=0.6.0 <0.7.0;
+pragma experimental ABIEncoderV2;
 
 import './OyaOrder.sol';
 import './Token.sol';
@@ -42,7 +43,7 @@ contract OyaController is BaseRelayRecipient {
     address payable _seller,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
-    bytes32[] calldata _productHashes
+    string[] calldata _productHashes
   )
     external
     payable

@@ -1,4 +1,5 @@
 pragma solidity >=0.6.0 <0.7.0;
+pragma experimental ABIEncoderV2;
 
 import './OyaController.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -11,7 +12,7 @@ contract OyaOrder is BaseRelayRecipient {
   address payable public arbitrator;
   IERC20 public paymentToken;
   uint256 public balance;
-  bytes32[] public productHashes;
+  string[] public productHashes;
   OyaController public controller;
 
   enum State { Created, Locked, Dispute }
@@ -60,7 +61,7 @@ contract OyaOrder is BaseRelayRecipient {
     address _trustedForwarder,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
-    bytes32[] memory _productHashes
+    string[] memory _productHashes
   ) public payable {
     buyer = _buyer;
     seller = _seller;
