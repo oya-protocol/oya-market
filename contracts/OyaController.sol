@@ -41,8 +41,10 @@ contract OyaController is BaseRelayRecipient {
   function createOrder(
     address payable _buyer,
     address payable _seller,
+    address payable _affiliate,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
+    uint256 _affiliateCut,
     string[] calldata _productHashes
   )
     external
@@ -53,9 +55,11 @@ contract OyaController is BaseRelayRecipient {
       _buyer,
       _seller,
       arbitrator,
+      _affiliate,
       trustedForwarder,
       _paymentToken,
       _paymentAmount,
+      _affiliateCut,
       _productHashes
     );
 

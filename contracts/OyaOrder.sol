@@ -1,19 +1,27 @@
 pragma solidity >=0.6.0 <0.7.0;
 pragma experimental ABIEncoderV2;
 
-import './OyaController.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@nomiclabs/buidler/console.sol";
 import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+
+interface IOyaController {
+  function reward(address recipient) external;
+  function clearOrder() external;
+}
 
 contract OyaOrder is BaseRelayRecipient {
+  using SafeMath for uint256;
+
   address payable public seller;
   address payable public buyer;
   address payable public arbitrator;
+  address payable public affiliate;
   IERC20 public paymentToken;
   uint256 public balance;
+  uint256 public affiliateCut;
   string[] public productHashes;
-  OyaController public controller;
+  IOyaController public controller;
 
   enum State { Created, Locked, Dispute }
   // The state variable has a default value of the first member, `State.created`
@@ -52,25 +60,30 @@ contract OyaOrder is BaseRelayRecipient {
   }
 
   event BuyerRefunded();
+  event AffiliatePaid();
   event SellerPaid();
 
   constructor(
     address payable _buyer,
     address payable _seller,
     address payable _arbitrator,
+    address payable _affiliate,
     address _trustedForwarder,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
+    uint256 _affiliateCut,
     string[] memory _productHashes
   ) public payable {
     buyer = _buyer;
     seller = _seller;
     arbitrator = _arbitrator;
+    affiliate = _affiliate;
     trustedForwarder = _trustedForwarder;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
+    affiliateCut = _affiliateCut;
     productHashes = _productHashes;
-    controller = OyaController(_msgSender());
+    controller = IOyaController(_msgSender());
   }
 
   function cancelOrder()
@@ -117,10 +130,18 @@ contract OyaOrder is BaseRelayRecipient {
     onlyBuyer
   {
     _reward(buyer);
+    _payAffiliate();
     _paySeller();
   }
 
-  // This internal function pays the seller
+  function _payAffiliate()
+    internal
+  {
+    emit AffiliatePaid();
+    paymentToken.transfer(affiliate, affiliateCut);
+    balance = balance.sub(affiliateCut);
+  }
+
   function _paySeller()
     internal
   {
