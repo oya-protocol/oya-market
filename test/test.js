@@ -471,6 +471,8 @@ describe("Order", function() {
 
     let sellerRewards = await oyaToken.balanceOf(sellerAddress);
     expect(sellerRewards).to.equal(10);
+    let affiliateRewards = await oyaToken.balanceOf(affiliateAddress);
+    expect(affiliateRewards).to.equal(10);
     let buyerRewards = await oyaToken.balanceOf(buyerAddress);
     expect(buyerRewards).to.equal(10);
 

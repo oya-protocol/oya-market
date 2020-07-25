@@ -140,6 +140,7 @@ contract OyaOrder is BaseRelayRecipient {
     emit AffiliatePaid();
     paymentToken.transfer(affiliate, affiliateCut);
     balance = balance.sub(affiliateCut);
+    _reward(affiliate);
   }
 
   function _paySeller()
