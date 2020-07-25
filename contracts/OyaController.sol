@@ -6,6 +6,10 @@ import './Token.sol';
 import "@nomiclabs/buidler/console.sol";
 import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
+interface IAffiliateRegistry {
+  function hasAffiliate(address seller, address affiliate) external view returns (bool);
+}
+
 contract OyaController is BaseRelayRecipient {
 
   struct Order {
@@ -21,6 +25,7 @@ contract OyaController is BaseRelayRecipient {
   address updater;
   address payable arbitrator;
   uint256 rewardAmount;
+  IAffiliateRegistry affiliateRegistry;
 
   event OrderCreated(address);
 
@@ -51,6 +56,9 @@ contract OyaController is BaseRelayRecipient {
     payable
   {
     require (_msgSender() == _buyer);
+    if (_affiliateCut > 0) {
+      require (affiliateRegistry.hasAffiliate(_seller, _affiliate), "Affiliate must be approved by seller.");
+    }
     OyaOrder newOrder = new OyaOrder(
       _buyer,
       _seller,
@@ -89,6 +97,10 @@ contract OyaController is BaseRelayRecipient {
 
   function setTrustedForwarder(address _trustedForwarder) onlyUpdater public {
     trustedForwarder = _trustedForwarder;
+  }
+
+  function setAffiliateRegistry(address _affiliateRegistry) onlyUpdater public {
+    affiliateRegistry = IAffiliateRegistry(_affiliateRegistry);
   }
 
   // order management functions

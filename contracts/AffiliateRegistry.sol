@@ -1,15 +1,23 @@
 pragma solidity >=0.6.0 <0.7.0;
 
-contract AffiliateRegistry {
-  mapping(address => address[]) sellerToAffiliates;
+import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 
-  function addAffiliate(address seller, address affiliate) public {
+contract AffiliateRegistry {
+  using EnumerableSet for EnumerableSet.AddressSet;
+
+  mapping(address => EnumerableSet.AddressSet) sellerAffiliates;
+
+  function addAffiliate(address seller, address affiliate) external {
     require(msg.sender == seller, "Only sellers can add their affiliates.");
-    sellerToAffiliates[seller].push(affiliate);
+    sellerAffiliates[seller].add(affiliate);
   }
 
-  function removeAffiliate(address seller, address affiliate) public {
+  function removeAffiliate(address seller, address affiliate) external {
     require(msg.sender == seller, "Only sellers can remove their affiliates.");
-    sellerToAffiliates[seller].push(affiliate);
+    sellerAffiliates[seller].remove(affiliate);
+  }
+
+  function hasAffiliate(address seller, address affiliate) external view returns (bool) {
+    return sellerAffiliates[seller].contains(affiliate);
   }
 }

@@ -4,6 +4,7 @@ const log = console.log;
 const OyaOrder = require('../artifacts/OyaOrder');
 const OyaController = require('../artifacts/OyaController');
 const Token = require('../artifacts/Token');
+const AffiliateRegistry = require('../artifacts/AffiliateRegistry');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -51,6 +52,11 @@ describe("Controller", function() {
       OyaController.bytecode,
       updater
     );
+    const AffiliateRegistryFactory = new ethers.ContractFactory(
+      AffiliateRegistry.abi,
+      AffiliateRegistry.bytecode,
+      updater
+    );
 
     const daiToken = await Dai.deploy("Fake Dai", "fDAI");
     await daiToken.deployed();
@@ -74,10 +80,14 @@ describe("Controller", function() {
     const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
 
-    log(explanation("\nLet's deploy " + chalk.whiteBright("Oya Token") + "and the " + chalk.whiteBright("Controller") + "..."));
+    const affiliateRegistry = await AffiliateRegistryFactory.deploy();
+    await affiliateRegistry.deployed();
+
+    log(explanation("\nLet's deploy " + chalk.whiteBright("Oya Token") + ", the " + chalk.whiteBright("Controller") + " and the " + chalk.whiteBright("Affiliate Registry") + "..."));
     log(chalk`
       {whiteBright Oya Token}: ${oyaToken.address}
       {whiteBright Controller}: ${controller.address}
+      {whiteBright Affiliate Registry}: ${affiliateRegistry.address}
     `);
 
 
@@ -85,6 +95,7 @@ describe("Controller", function() {
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
     await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
+    await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     log(explanation("\nThe " + chalk.whiteBright("Updater") + " sets the " + chalk.magentaBright("reward amount") + ", the " + chalk.whiteBright("Oya Token") + " contract address, and default " + chalk.redBright("arbitrator ") + "address in the " + chalk.whiteBright("Controller") + "."));
     log(chalk`
@@ -93,6 +104,7 @@ describe("Controller", function() {
       {magentaBright address arbitrator}: ${arbitratorAddress}
     `);
 
+    await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -179,6 +191,11 @@ describe("Order", function() {
       OyaController.bytecode,
       updater
     );
+    const AffiliateRegistryFactory = new ethers.ContractFactory(
+      AffiliateRegistry.abi,
+      AffiliateRegistry.bytecode,
+      updater
+    );
 
     const daiToken = await Dai.deploy("Dai", "DAI");
     await daiToken.deployed();
@@ -192,10 +209,17 @@ describe("Order", function() {
 
     const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
+
+    const affiliateRegistry = await AffiliateRegistryFactory.deploy();
+    await affiliateRegistry.deployed();
+
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
     await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
+    await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
+
+    await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -284,6 +308,11 @@ describe("Order", function() {
       OyaController.bytecode,
       updater
     );
+    const AffiliateRegistryFactory = new ethers.ContractFactory(
+      AffiliateRegistry.abi,
+      AffiliateRegistry.bytecode,
+      updater
+    );
 
     const daiToken = await Dai.deploy("Dai", "DAI");
     await daiToken.deployed();
@@ -297,10 +326,17 @@ describe("Order", function() {
 
     const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
+
+    const affiliateRegistry = await AffiliateRegistryFactory.deploy();
+    await affiliateRegistry.deployed();
+
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
     await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
+    await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
+
+    await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -389,6 +425,11 @@ describe("Order", function() {
       OyaController.bytecode,
       updater
     );
+    const AffiliateRegistryFactory = new ethers.ContractFactory(
+      AffiliateRegistry.abi,
+      AffiliateRegistry.bytecode,
+      updater
+    );
 
     const daiToken = await Dai.deploy("Dai", "DAI");
     await daiToken.deployed();
@@ -402,10 +443,17 @@ describe("Order", function() {
 
     const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
+
+    const affiliateRegistry = await AffiliateRegistryFactory.deploy();
+    await affiliateRegistry.deployed();
+
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
     await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
+    await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
+
+    await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -508,6 +556,11 @@ describe("Order", function() {
       OyaController.bytecode,
       updater
     );
+    const AffiliateRegistryFactory = new ethers.ContractFactory(
+      AffiliateRegistry.abi,
+      AffiliateRegistry.bytecode,
+      updater
+    );
 
     const daiToken = await Dai.deploy("Dai", "DAI");
     await daiToken.deployed();
@@ -521,10 +574,17 @@ describe("Order", function() {
 
     const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
+
+    const affiliateRegistry = await AffiliateRegistryFactory.deploy();
+    await affiliateRegistry.deployed();
+
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
     await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
+    await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
+
+    await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
@@ -619,6 +679,11 @@ describe("Order", function() {
       OyaController.bytecode,
       updater
     );
+    const AffiliateRegistryFactory = new ethers.ContractFactory(
+      AffiliateRegistry.abi,
+      AffiliateRegistry.bytecode,
+      updater
+    );
 
     const daiToken = await Dai.deploy("Dai", "DAI");
     await daiToken.deployed();
@@ -632,10 +697,17 @@ describe("Order", function() {
 
     const controller = await OyaControllerFactory.deploy(updaterAddress);
     await controller.deployed();
+
+    const affiliateRegistry = await AffiliateRegistryFactory.deploy();
+    await affiliateRegistry.deployed();
+
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
     await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
+    await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
+
+    await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
 
     await oyaToken.connect(updater).grantRole(
       ethers.utils.id("MINTER_ROLE"),
