@@ -12,15 +12,14 @@ interface IOyaController {
 contract OyaOrder {
   using SafeMath for uint256;
 
-  address payable public seller;
-  address payable public buyer;
-  address payable public arbitrator;
-  address payable public affiliate;
-  IERC20 public paymentToken;
-  uint256 public balance;
-  uint256 public affiliateCut;
-  string[] public productHashes;
-  IOyaController public controller;
+  address payable private seller;
+  address payable private buyer;
+  address payable private arbitrator;
+  address payable private affiliate;
+  IERC20 private paymentToken;
+  uint256 private balance;
+  uint256 private affiliateCut;
+  IOyaController private controller;
 
   enum State { Created, Locked, Dispute }
   // The state variable has a default value of the first member, `State.created`
@@ -58,6 +57,7 @@ contract OyaOrder {
     _;
   }
 
+  event OrderCreated(string[]);
   event BuyerRefunded();
   event AffiliatePaid();
   event SellerPaid();
@@ -79,8 +79,8 @@ contract OyaOrder {
     paymentToken = _paymentToken;
     balance = _paymentAmount;
     affiliateCut = _affiliateCut;
-    productHashes = _productHashes;
     controller = IOyaController(msg.sender);
+    emit OrderCreated(_productHashes);
   }
 
   function cancelOrder()
@@ -129,6 +129,7 @@ contract OyaOrder {
     _reward(buyer);
     _payAffiliate();
     _paySeller();
+    selfdestruct(seller);
   }
 
   function _payAffiliate()
@@ -147,7 +148,6 @@ contract OyaOrder {
     paymentToken.transfer(seller, balance);
     _reward(seller);
     controller.clearOrder();
-    selfdestruct(seller);
   }
 
   function _refundBuyer()
