@@ -2,7 +2,6 @@ pragma solidity >=0.6.0 <0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 interface IOyaController {
@@ -10,7 +9,7 @@ interface IOyaController {
   function clearOrder() external;
 }
 
-contract OyaOrder is BaseRelayRecipient {
+contract OyaOrder {
   using SafeMath for uint256;
 
   address payable public seller;
@@ -29,7 +28,7 @@ contract OyaOrder is BaseRelayRecipient {
 
   modifier onlyBuyer() {
     require(
-        _msgSender() == buyer,
+        msg.sender == buyer,
         "Only buyer can call this."
     );
     _;
@@ -37,7 +36,7 @@ contract OyaOrder is BaseRelayRecipient {
 
   modifier onlySeller() {
     require(
-        _msgSender() == seller,
+        msg.sender == seller,
         "Only seller can call this."
     );
     _;
@@ -45,7 +44,7 @@ contract OyaOrder is BaseRelayRecipient {
 
   modifier onlyArbitrator() {
     require(
-        _msgSender() == arbitrator,
+        msg.sender == arbitrator,
         "Only arbitrator can call this."
     );
     _;
@@ -68,7 +67,6 @@ contract OyaOrder is BaseRelayRecipient {
     address payable _seller,
     address payable _arbitrator,
     address payable _affiliate,
-    address _trustedForwarder,
     IERC20 _paymentToken,
     uint256 _paymentAmount,
     uint256 _affiliateCut,
@@ -78,19 +76,18 @@ contract OyaOrder is BaseRelayRecipient {
     seller = _seller;
     arbitrator = _arbitrator;
     affiliate = _affiliate;
-    trustedForwarder = _trustedForwarder;
     paymentToken = _paymentToken;
     balance = _paymentAmount;
     affiliateCut = _affiliateCut;
     productHashes = _productHashes;
-    controller = IOyaController(_msgSender());
+    controller = IOyaController(msg.sender);
   }
 
   function cancelOrder()
     external
     inState(State.Created)
   {
-    require(_msgSender() == buyer || _msgSender() == seller);
+    require(msg.sender == buyer || msg.sender == seller);
     _refundBuyer();
   }
 
@@ -167,10 +164,4 @@ contract OyaOrder is BaseRelayRecipient {
   {
     controller.reward(recipient);
   }
-
-  // OpenGSN function
-  function versionRecipient() external virtual view
-  	override returns (string memory) {
-  		return "1.0";
-    }
 }

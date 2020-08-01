@@ -4,13 +4,12 @@ pragma experimental ABIEncoderV2;
 import './OyaOrder.sol';
 import './Token.sol';
 import "@nomiclabs/buidler/console.sol";
-import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
 interface IAffiliateRegistry {
   function hasAffiliate(address seller, address affiliate) external view returns (bool);
 }
 
-contract OyaController is BaseRelayRecipient {
+contract OyaController {
 
   struct Order {
     bool exists;
@@ -31,7 +30,7 @@ contract OyaController is BaseRelayRecipient {
 
   modifier onlyUpdater() {
     require(
-        _msgSender() == updater,
+        msg.sender == updater,
         "Only updater can call this."
     );
     _;
@@ -55,7 +54,7 @@ contract OyaController is BaseRelayRecipient {
     external
     payable
   {
-    require (_msgSender() == _buyer);
+    require (msg.sender == _buyer);
     if (_affiliateCut > 0) {
       require (affiliateRegistry.hasAffiliate(_seller, _affiliate), "Affiliate must be approved by seller.");
     }
@@ -64,14 +63,13 @@ contract OyaController is BaseRelayRecipient {
       _seller,
       arbitrator,
       _affiliate,
-      trustedForwarder,
       _paymentToken,
       _paymentAmount,
       _affiliateCut,
       _productHashes
     );
 
-    _paymentToken.transferFrom(_msgSender(), address(newOrder), _paymentAmount);
+    _paymentToken.transferFrom(msg.sender, address(newOrder), _paymentAmount);
 
     emit OrderCreated(address(newOrder));
 
@@ -95,28 +93,18 @@ contract OyaController is BaseRelayRecipient {
     rewardAmount = _rewardAmount;
   }
 
-  function setTrustedForwarder(address _trustedForwarder) onlyUpdater public {
-    trustedForwarder = _trustedForwarder;
-  }
-
   function setAffiliateRegistry(address _affiliateRegistry) onlyUpdater public {
     affiliateRegistry = IAffiliateRegistry(_affiliateRegistry);
   }
 
   // order management functions
   function reward(address recipient) external {
-    require (orders[_msgSender()].exists == true);
+    require (orders[msg.sender].exists == true);
     oyaToken.mint(recipient, rewardAmount);
   }
 
   function clearOrder() external {
-    require (orders[_msgSender()].exists == true);
-    delete(orders[_msgSender()]);
+    require (orders[msg.sender].exists == true);
+    delete(orders[msg.sender]);
   }
-
-  // OpenGSN function
-  function versionRecipient() external virtual view
-  	override returns (string memory) {
-  		return "1.0";
-    }
 }

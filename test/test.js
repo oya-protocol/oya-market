@@ -15,14 +15,13 @@ const explanation = chalk.cyanBright;
 describe("Controller", function() {
   this.timeout(100000);
   it("Controller should be able to deploy order contract", async function() {
-    const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
+    const [updater, buyer, seller, affiliate, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     updaterAddress = await updater.getAddress();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     affiliateAddress = await affiliate.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
-    trustedForwarderAddress = await trustedForwarder.getAddress();
 
     log(explanation('\nSetting up some addresses from ethers.getSigners...'));
     log(chalk`
@@ -94,7 +93,6 @@ describe("Controller", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
-    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
     await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     log(explanation("\nThe " + chalk.whiteBright("Updater") + " sets the " + chalk.magentaBright("reward amount") + ", the " + chalk.whiteBright("Oya Token") + " contract address, and default " + chalk.redBright("arbitrator ") + "address in the " + chalk.whiteBright("Controller") + "."));
@@ -168,14 +166,13 @@ describe("Order", function() {
   it("Buyer should be able to cancel order", async function() {
     log(explanation("\nIf the " + chalk.yellowBright("seller") + " has not accepted the order yet, the " + chalk.greenBright("buyer") + " can cancel and automatically get their money back.\n"));
 
-    const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
+    const [updater, buyer, seller, affiliate, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     affiliateAddress = await affiliate.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
-    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -216,7 +213,6 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
-    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
     await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
@@ -285,14 +281,13 @@ describe("Order", function() {
   it("Seller should be able to cancel order", async function() {
     log(explanation("\nIf the " + chalk.yellowBright("seller") + " realizes they can not fulfill the order, they can cancel it and the " + chalk.greenBright("buyer") + " will automatically get their money back.\n"));
 
-    const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
+    const [updater, buyer, seller, affiliate, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     affiliateAddress = await affiliate.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
-    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -333,7 +328,6 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
-    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
     await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
@@ -402,14 +396,13 @@ describe("Order", function() {
   it("Seller should be able to get paid if buyer accepts item", async function() {
     log(explanation("\nIn most cases, the " + chalk.greenBright("buyer") + " will mark an item as accepted, to earn " + chalk.whiteBright("Oya Token") + " rewards. This also automatically pays the " + chalk.yellowBright("seller") + ".\n"));
 
-    const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
+    const [updater, buyer, seller, affiliate, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     affiliateAddress = await affiliate.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
-    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -450,7 +443,6 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
-    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
     await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
@@ -533,14 +525,13 @@ describe("Order", function() {
   it("Buyer should be able to get paid if arbitrator rules in their favor", async function() {
     log(explanation("\nIf the " + chalk.greenBright("buyer") + " raises a dispute, the " + chalk.redBright("arbitrator") + " reviews the case and chooses to pay either the " + chalk.greenBright("buyer") + " or the " + chalk.yellowBright("seller") + ".\n"));
 
-    const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
+    const [updater, buyer, seller, affiliate, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     affiliateAddress = await affiliate.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
-    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -581,7 +572,6 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
-    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
     await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
@@ -656,14 +646,13 @@ describe("Order", function() {
   });
 
   it("Seller should be able to get paid if arbitrator rules in their favor", async function() {
-    const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
+    const [updater, buyer, seller, affiliate, arbitrator] = await ethers.getSigners();
     const provider = ethers.getDefaultProvider();
     buyerAddress = await buyer.getAddress();
     sellerAddress = await seller.getAddress();
     affiliateAddress = await affiliate.getAddress();
     arbitratorAddress = await arbitrator.getAddress();
     updaterAddress = await updater.getAddress();
-    trustedForwarderAddress = await trustedForwarder.getAddress();
     const Dai = new ethers.ContractFactory(
       Token.abi,
       Token.bytecode,
@@ -704,7 +693,6 @@ describe("Order", function() {
     await controller.connect(updater).setToken(oyaToken.address);
     await controller.connect(updater).setArbitrator(arbitratorAddress);
     await controller.connect(updater).setRewardAmount(10);
-    await controller.connect(updater).setTrustedForwarder(trustedForwarderAddress);
     await controller.connect(updater).setAffiliateRegistry(affiliateRegistry.address);
 
     await affiliateRegistry.connect(seller).addAffiliate(sellerAddress, affiliateAddress);
@@ -784,121 +772,3 @@ describe("Order", function() {
 
   });
 });
-
-
-
-/* Chainlink tests */
-
-// it("Seller should be able to set tracking information", async function() {
-//   log(explanation("\nIf the order looks good, the " + chalk.yellowBright("seller") + " can accept the order to lock it and set tracking information."));
-//
-//   const [updater, buyer, seller, affiliate, arbitrator, trustedForwarder] = await ethers.getSigners();
-//   const provider = ethers.getDefaultProvider();
-//   buyerAddress = await buyer.getAddress();
-//   sellerAddress = await seller.getAddress();
-//   affiliateAddress = await affiliate.getAddress();
-//   arbitratorAddress = await arbitrator.getAddress();
-//   updaterAddress = await updater.getAddress();
-//   const Dai = new ethers.ContractFactory(
-//     Token.abi,
-//     Token.bytecode,
-//     updater
-//   );
-//   const LinkToken = new ethers.ContractFactory(
-//     Token.abi,
-//     Token.bytecode,
-//     updater
-//   );
-//   const OyaToken = new ethers.ContractFactory(
-//     Token.abi,
-//     Token.bytecode,
-//     updater
-//   );
-//   const OyaControllerFactory = new ethers.ContractFactory(
-//     OyaController.abi,
-//     OyaController.bytecode,
-//     updater
-//   );
-//
-//   const daiToken = await Dai.deploy("Dai", "DAI");
-//   await daiToken.deployed();
-//
-//   await daiToken.mint(buyerAddress, 100);
-//   let buyerBalance = await daiToken.balanceOf(buyerAddress);
-//   expect(buyerBalance).to.equal(100);
-//
-//   const linkToken = await LinkToken.deploy("Link", "LINK");
-//   await linkToken.deployed();
-//
-//   const oyaToken = await OyaToken.deploy("Oya", "OYA");
-//   await oyaToken.deployed();
-//
-//   const controller = await OyaControllerFactory.deploy(updaterAddress);
-//   await controller.deployed();
-//   await controller.connect(updater).setToken(oyaToken.address);
-//   await controller.connect(updater).setArbitrator(arbitratorAddress);
-//   await controller.connect(updater).setRewardAmount(10);
-//
-//   await oyaToken.connect(updater).grantRole(
-//     ethers.utils.id("MINTER_ROLE"),
-//     controller.address
-//   );
-//
-//   await daiToken.connect(buyer).approve(controller.address, 100);
-//
-//   let orderAddress;
-//
-//   let tx = await controller.connect(buyer).createOrder(
-//     buyerAddress,
-//     sellerAddress,
-//     daiToken.address,
-//     100,
-//     linkToken.address
-//   );
-//
-//   controller.on("OrderCreated", (newOrder, event) => {
-//     orderAddress = newOrder;
-//
-//     event.removeListener();
-//   });
-//
-//   await tx.wait(1);
-//
-//   buyerBalance = await daiToken.balanceOf(buyerAddress);
-//   expect(buyerBalance).to.equal(0);
-//
-//   controllerBalance = await daiToken.balanceOf(controller.address);
-//   expect(controllerBalance).to.equal(0);
-//
-//   orderBalance = await daiToken.balanceOf(orderAddress);
-//   expect(orderBalance).to.equal(100);
-//
-//   const order = new ethers.Contract(orderAddress, OyaOrder.abi, provider);
-//
-//   const shippingProvider = ethers.utils.formatBytes32String("USPS");
-//   const trackingNumber = ethers.utils.formatBytes32String("954901983837217");
-//
-//   log(explanation("\nThe " + chalk.yellowBright("seller") + " calls " + chalk.magentaBright("setTracking") + " with the shipping provider and tracking number."));
-//   log(chalk`
-//     {magentaBright bytes32 shippingProvider}: ${shippingProvider}
-//     {magentaBright bytes32 trackingNumber}: ${trackingNumber}
-//   `);
-//
-//
-//   await order.connect(seller).setTracking(
-//     ethers.utils.formatBytes32String("USPS"),
-//     ethers.utils.formatBytes32String("954901983837217")
-//   );
-//
-//   log(explanation("These details are stored in " + chalk.whiteBright("Order") + " and can be used to confirm delivery with an " + chalk.whiteBright("Chainlink") + " integration with the " + chalk.whiteBright("EasyPost") + " API."));
-//
-//   log(explanation("\nIf the " + chalk.greenBright("buyer") + " doesn't explicitly mark the delivery as accepted, after a wait period for buyer returns, the " + chalk.yellowBright("seller") + " can confirm delivery with " + chalk.whiteBright("Chainlink") + " and automatically claim the payment.\n"));
-//
-//
-//   const trackingInfo = await order.connect(buyer).getTracking();
-//   expect(ethers.utils.parseBytes32String(trackingInfo[0])).to.equal("USPS");
-//   expect(ethers.utils.parseBytes32String(trackingInfo[1])).to.equal("954901983837217");
-//
-//   log(explanation("\nNote: The wait period right now is 15 days, so we can't do a practical demo. You can see the code on GitHub!\n"));
-//
-// });
