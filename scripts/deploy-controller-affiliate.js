@@ -10,8 +10,6 @@ async function main() {
   // to make sure everything is compiled
   // await bre.run('compile');
 
-  const contracts = ['AffiliateRegistry', 'OyaController', 'OyaToken'];
-
   const AffiliateRegistry = await ethers.getContractFactory("AffiliateRegistry");
   const affiliateRegistry = await AffiliateRegistry.deploy();
 
