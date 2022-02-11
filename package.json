@@ -31,7 +31,7 @@
   "dependencies": {
     "@chainlink/contracts": "0.0.3",
     "@opengsn/gsn": "^0.10.0",
-    "@openzeppelin/contracts": "3.0.2",
+    "@openzeppelin/contracts": "4.4.2",
     "dotenv": "^8.2.0",
     "elliptic": ">=6.5.4"
   }
